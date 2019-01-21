@@ -5,7 +5,7 @@ namespace App\Traits;
 use App\Http\Resources\UserResource;
 use Carbon\Carbon;
 use Illuminate\Auth\Events\Login;
-use App\User;
+use App\Models\User;
 use \Illuminate\Contracts\Auth\CanResetPassword;
 
 trait AuthTokenResponses

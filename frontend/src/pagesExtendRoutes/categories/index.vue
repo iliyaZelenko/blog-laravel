@@ -1,0 +1,342 @@
+<template>
+  <div class="w-100 h-100">
+    <h1 class="display-1">
+      {{ selectedCategory ? selectedCategory.name : 'Выбор категории' }}
+    </h1>
+
+    <p v-if="selectedCategory">
+      {{ selectedCategory.description }}
+    </p>
+
+    <categories-breadcrumbs
+      :items="breadcrumbs"
+      @select="onSelectCategory"
+    />
+
+    <categories-toolbar
+      :items-search="categoriesForSearch"
+      :has-search="hasSearch"
+      :loading="!!loadingCategory"
+      :selected-category="selectedCategory"
+      :search.sync="search"
+      @search-select="onSelectCategory"
+    />
+
+    <categories-list
+      :categories="categoriesFiltered"
+      :loading-category="loadingCategory"
+      :has-search="hasSearch"
+      @select="onSelectCategory"
+    />
+
+    <template v-if="selectedCategory && !loadingCategory">
+      <h1 class="mt-5">
+        Посты категории
+      </h1>
+
+      <template v-if="selectedCategoryHasPosts">
+        <p>
+          <b>Постов на странице: </b> {{ selectedCategory.posts.paginatorInfo.count }}.
+          <b>Постов всего: </b> {{ selectedCategory.posts.paginatorInfo.total }}.
+        </p>
+
+        <posts-list
+          v-if="selectedCategoryHasPosts"
+          :posts="selectedCategory.posts.data"
+          :loading="loadingPosts"
+          :page="selectedCategory.posts.paginatorInfo.currentPage"
+          :pages="selectedCategory.posts.paginatorInfo.lastPage"
+          @page-change="onPageChange"
+        />
+      </template>
+      <v-alert
+        v-else
+        :value="true"
+        type="info"
+      >
+        Категория не содержит постов.
+      </v-alert>
+
+      <pre>{{ selectedCategory }}</pre>
+    </template>
+  </div>
+</template>
+
+<script lang="ts">
+import Vue from 'vue'
+import Component from '~/plugins/nuxt-class-component'
+import CategoriesList from '~/components/pages/categories/CategoriesList'
+import CategoriesBreadcrumbs from '~/components/pages/categories/CategoriesBreadcrumbs'
+import CategoriesToolbar from '~/components/pages/categories/CategoriesToolbar'
+import PostsList from '~/components/pages/posts/PostsList'
+import { GET_CATEGORY_QUERY } from '~/apollo/queries/categories/getCategory'
+import { GET_ROOT_CATEGORIES_QUERY } from '~/apollo/queries/categories/getRootCategories'
+import { GET_CATEGORY_POSTS_QUERY } from '~/apollo/queries/posts/getCategoryPosts'
+
+// интерфейс именно получаемой категории через GraphQL, поэтому этот интерфейс не нужно обобщать
+interface CategoryInterface {
+  id: number
+  name: string
+  path: string
+  children: any[]
+  ancestorsAndSelfInfo: any
+  haveChild: boolean
+  // postsCount: number,
+  // allPostsCount: number,
+  posts: PostsInterface
+}
+
+interface PostsInterface {
+  data: PostInterface[]
+  paginatorInfo: {
+    lastPage: number
+    currentPage: number
+    count: number
+    total: number
+  }
+}
+
+interface PostInterface {
+  id: number
+  title: string
+  contentShort: string
+  user: {
+    nickname: string
+    fullName: string
+  }
+}
+
+@Component({
+  components: {
+    CategoriesList, CategoriesBreadcrumbs, CategoriesToolbar, PostsList
+  },
+  props: {
+    path: {
+      type: String,
+      default: ''
+    },
+    id: {
+      type: String,
+      default: null
+    },
+    page: {
+      type: String,
+      default: '1'
+    }
+  }
+})
+export default class Categories extends Vue {
+  async asyncData ({ app, redirect, error, params: { path, id, page } }) {
+    const pathWithSlash = '/' + path
+
+    // TODO было path
+    if (id) {
+      // Если передавать path, то так: decodeURIComponent(pathWithSlash)
+      const category = await getCategory.apply(app, [id, +page])
+      const maxPage = category.posts.paginatorInfo.lastPage
+
+      console.log(category)
+
+      if (!category) {
+        return error({
+          statusCode: 404,
+          message: 'категория не найдена'
+        })
+      }
+      if (page > maxPage) {
+        // TODO возможно просто page = posts.paginatorInfo.lastPage
+        return error({
+          statusCode: 404,
+          message: `страница ${page} не существует, последняя страница: ${maxPage}.`
+        })
+      }
+
+      if (category.path !== pathWithSlash) {
+        redirect(this.getCategoryPath(category))
+      }
+
+      // console.log(category)
+
+      return { selectedCategory: category, categories: [] }
+    }
+
+    return { categories: await getRootCategories.apply(app) } // await app.$get('categories')
+  }
+
+  search: string | null = null
+  selectedCategory: CategoryInterface | null = null
+  loadingCategory: CategoryInterface | null = null
+  loadingPosts: boolean = false
+  categories: CategoryInterface[] = []
+  breadcrumbsItemsStart = [
+    {
+      name: 'Главная',
+      onClick: () => {
+        // TODO this.$router.push
+        location.href = this.localePath('index')
+        // this.$router.push(
+        //   this.localePath('index')
+        // )
+      }
+    },
+    {
+      name: 'Категории',
+      onClick: () => {
+        // document.location.reload()
+        // location.href = '/categories'
+        // TODO this.$router.push
+        location.href = this.localePath('categories')
+
+        // this.selectedCategory = null
+        // this.categories = []
+        // this.$router.push(
+        //   this.localePath('categories')
+        // )
+
+        // this.selectedCategory = null
+        // this.categories = []
+        // this.$router.push(
+        //   this.localePath('category-with-path')
+        // )
+      } // /self-development
+    }
+  ]
+
+  get selectedCategoryHasPosts (): boolean {
+    return !!this.selectedCategory && !!this.selectedCategory.posts.paginatorInfo.total
+  }
+
+  get categoriesForSearch (): CategoryInterface[] {
+    return this.selectedCategory ? this.selectedCategory.children : this.categories
+  }
+
+  get categoriesFiltered () {
+    const arr = this.categoriesForSearch
+
+    if (!this.search) return arr
+
+    return arr.filter((i: CategoryInterface) =>
+      i.name.toLowerCase().includes(
+        // @ts-ignore Этой ошибки не должно быть
+        this.search.toLowerCase()
+      )
+    )
+  }
+
+  get hasSearch (): boolean {
+    return !!(this.categories.length || (this.selectedCategory && this.selectedCategory.haveChild))
+  }
+
+  get breadcrumbs () {
+    const result = [...this.breadcrumbsItemsStart]
+
+    if (this.selectedCategory) {
+      // console.log('selectedCategory', this.selectedCategory)
+      result.push(
+        // TODO норм case
+        ...this.selectedCategory.ancestorsAndSelfInfo
+      )
+    }
+
+    return result.map((item, i) => ({
+      ...item,
+      index: i
+    }))
+  }
+
+  async onPageChange (newPage) {
+    if (!this.selectedCategory) return
+
+    this.loadingPosts = true
+    this.selectedCategory.posts = await getPostsByPage.apply(this, [newPage])
+    this.loadingPosts = false
+
+    this.$router.replace(
+      this.getCategoryPath(this.selectedCategory, newPage)
+    )
+
+    // const path = this.getCategoryPath(this.selectedCategory, newPage)
+    //
+    // this.loadingPosts = true
+    // this.$router.push(path, () => {
+    //   this.loadingPosts = false
+    // })
+
+    // console.log('result', this.selectedCategory.posts)
+  }
+
+  async onSelectCategory (category) {
+    if (category.onClick) {
+      category.onClick()
+    } else {
+      const path = this.getCategoryPath(category)
+
+      this.loadingCategory = category
+
+      this.$router.push(path, () => {
+        this.loadingCategory = null
+      })
+    }
+  }
+
+  getCategoryPath (category, page = '1') {
+    return decodeURIComponent(
+      this.localePath({
+        name: 'category-with-path',
+        params: {
+          path: category.path.slice(1),
+          id: category.id,
+          page
+        }
+      })
+    )
+  }
+}
+
+async function getCategory (id, page): Promise<CategoryInterface> {
+  const { data: { category } } = await this.$apollo.query({
+    query: GET_CATEGORY_QUERY,
+    variables: { id, page }
+  })
+
+  // console.log('category', category)
+
+  return category
+}
+
+async function getRootCategories (): Promise<CategoryInterface[]> {
+  const { data: { rootCategories } } = await this.$apollo.query({
+    query: GET_ROOT_CATEGORIES_QUERY
+  })
+
+  // console.log('category', category)
+
+  return rootCategories
+}
+
+async function getPostsByPage (page: number = 1): Promise<PostsInterface> {
+  /*
+    {
+      data: posts,
+      paginatorInfo: {
+        lastPage: pages
+      }
+    }
+   */
+  const {
+    data: {
+      category: {
+        posts
+      }
+    }
+  } = await this.$apollo.query({
+    query: GET_CATEGORY_POSTS_QUERY,
+    variables: {
+      page,
+      id: this.selectedCategory.id
+    }
+  })
+
+  return posts
+}
+</script>

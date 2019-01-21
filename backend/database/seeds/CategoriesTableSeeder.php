@@ -1,8 +1,8 @@
 <?php
 
 use Illuminate\Database\Seeder;
-use App\Category;
-use App\KeepInMindRecord;
+use App\Models\Category;
+use App\Models\Post;
 
 class CategoriesTableSeeder extends Seeder
 {
@@ -14,30 +14,31 @@ class CategoriesTableSeeder extends Seeder
     public function run()
     {
         $categoriesConfigs = [
-            'tests' => '/self-development/tests/',
-            'keepInMind' => '/self-development/keep-in-mind/'
+//            'tests' => '/self-development/tests/',
+            'main' => '/' // /categories/
         ];
 
         foreach ($categoriesConfigs as $config => $urlPrefix) {
             $configPath = "categories.$config";
-            $scopeId = config("$configPath.scope");
+//            $scopeId = config("$configPath.scope");
             $tree = config("$configPath.tree");
 
-            $this->createCategories($tree, $scopeId, $urlPrefix);
+//            , $scopeId
+            $this->createCategories($tree, $urlPrefix);
         }
     }
 
-    protected function createCategories($items, $scopeId, $urlPrefix, $parent = null)
+    protected function createCategories($items, $urlPrefix, $parent = null): void
     {
-//        dump($items);
-        collect($items)->each(function ($item) use ($scopeId, $urlPrefix, $parent) {
+        collect($items)->each(function ($item) use ($urlPrefix, $parent) {
             $fields = array_merge([
                     'parent_id' => $parent ? $parent->id : null, // $parent ? $parent->id : null, is_null($parent) ? null : $parent->id
-                    'scope_id' => $scopeId,
+//                    'scope_id' => $scopeId,
                     'name_slug' => str_slug($item['name']),
                     'path' => '' // дальше поставится
                 ],
-                array_except($item, ['_children', '_kim_records'])
+                // , '_kim_records'
+                array_except($item, ['_children', '_posts'])
             );
 
 //            dump('category: ' . $item['name']);
@@ -46,20 +47,24 @@ class CategoriesTableSeeder extends Seeder
 
             $this->setPath($category, $urlPrefix);
 
-            if (isset($item['_kim_records'])) {
-                $this->createKIMRecords($category, $item['_kim_records']);
+            if (isset($item['_posts'])) {
+                $this->createPosts($category, $item['_posts']);
             }
+
+//            if (isset($item['_kim_records'])) {
+//                $this->createKIMRecords($category, $item['_kim_records']);
+//            }
 //            if (isset($parent)) {
 //                $category->makeChildOf($parent);
 //            }
 
             if (isset($item['_children'])) {
-                $this->createCategories($item['_children'], $scopeId, $urlPrefix, $category);
+                $this->createCategories($item['_children'], $urlPrefix, $category);
             }
         });
     }
 
-    protected function setPath($model, $urlPrefix)
+    protected function setPath($model, $urlPrefix): void
     {
         if (is_null($model->parent_id)) {
             $pathAttribute = $model->name_slug;
@@ -72,15 +77,31 @@ class CategoriesTableSeeder extends Seeder
         $model->save();
     }
 
-    protected function createKIMRecords($category, $arr)
+    protected function createPosts(Category $category, $arr): void
     {
-        $models = [];
-
         foreach ($arr as $item) {
-            $models[] = new KeepInMindRecord($item);
-        }
+            $post = factory(Post::class)->make($item); // new Post($item);
+            $category->savePost($post);
 
-        $category->keepInMindRecords()->saveMany($models);
+            $tagsCount = random_int(3, 8);
+            $tagsId = \App\Models\Tag::inRandomOrder()
+                ->take($tagsCount)
+                ->pluck('id')
+                ->all();
+
+            $post->tags()->sync($tagsId);
+        }
     }
+
+//    protected function createKIMRecords($category, $arr)
+//    {
+//        $models = [];
+//
+//        foreach ($arr as $item) {
+//            $models[] = new KeepInMindRecord($item);
+//        }
+//
+//        $category->keepInMindRecords()->saveMany($models);
+//    }
 }
 

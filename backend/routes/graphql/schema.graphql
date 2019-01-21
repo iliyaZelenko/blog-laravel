@@ -1,0 +1,81 @@
+#import ./types.graphql
+#import ./categories.graphql
+
+type Query {
+    # the current auth user (dont forget to provide auth header)
+    me: User @auth
+    users: [User!]! @paginate(type: "paginator" model: "User")
+    user(id: ID @eq): User @find(model: "User")
+
+    ## Posts ##
+    allPosts: [Post!]! @paginate(type: "paginator" scopes: ["OrderByDESC"])
+
+    ## Categories ##
+    category(id: ID @eq): Category @find
+    rootCategories: [Category!]! @field(resolver: "CategoriesQuery@getRoots")
+}
+
+type Mutation {
+    createUser(
+        name: String @rules(apply: ["required"])
+        email: String @rules(apply: ["required", "email", "unique:users,email"])
+    ): User @create(model: "User")
+    createPost(
+        title: String @rules(apply: ["required"])
+        content: String @rules(apply: ["required"])
+        user_id: ID @rules(apply: ["required"])
+    ): Post @create
+    updateUser(
+        id: ID @rules(apply: ["required"])
+        name: String
+        email: String @rules(apply: ["email"])
+    ): User @update(model: "User")
+    deleteUser(
+        id: ID @rules(apply: ["required"])
+    ): User @delete(model: "User")
+}
+
+type User {
+    id: ID!
+    nickname: String!
+    email: String!
+    password: String!
+    firstName: String @rename(attribute: "first_name")
+    lastName: String @rename(attribute: "last_name")
+    fullName: String @rename(attribute: "full_name")
+    avatar: String
+    gender: UserGenderStatus
+    birthday: DateTime
+    createdAt: DateTime! @rename(attribute: "created_at")
+    updatedAt: DateTime! @rename(attribute: "updated_at")
+    posts: [Post] @hasMany(type: "paginator")
+    comments: [Comment] @hasMany(type: "paginator")
+}
+
+type Post {
+    id: ID!
+    title: String!
+    content: String!
+    contentShort: String! @rename(attribute: "content_short")
+    user: User! @belongsTo
+    comments: [Comment] @hasMany(type: "paginator")
+}
+
+type Comment {
+    id: ID!
+    content: String!
+    user: User! @belongsTo
+    post: User! @belongsTo
+    repliedComment: User! @belongsTo
+    repliesComments: [Comment] @hasMany(type: "paginator")
+}
+
+type Tag {
+    id: ID!
+
+}
+
+enum UserGenderStatus {
+    MALE @enum(value: true)
+    FEMALE @enum(value: false)
+}

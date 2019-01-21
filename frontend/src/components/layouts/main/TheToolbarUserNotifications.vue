@@ -18,7 +18,7 @@
     <!-- large -->
     <v-btn
       slot="activator"
-      flat
+      text
       icon
     >
       <v-badge

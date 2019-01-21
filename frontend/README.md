@@ -5,8 +5,6 @@
 
 [Why SSR?](https://ssr.vuejs.org/#why-ssr)
 
-Для CORS использовал [бандл NelmioCorsBundle](https://github.com/nelmio/NelmioCorsBundle) (настроил его в `config/packages/nelmmio_cors.yaml`).
-
 На фронте такие технологии:
 
 - Vue
@@ -21,6 +19,7 @@
     - cssnano (оптимизация)
 - Vuetify (UI Material Design)
 - TypeScript
+- GraphQL + Apollo client
 - Статические анализаторы
     - ESlint (ECMAScript + HTML)
       - Vue plugin (работает только в `template`, в `script` еще не сделали поддержку совместимую с TS)

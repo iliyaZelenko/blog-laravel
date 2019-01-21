@@ -29,11 +29,19 @@
       </v-btn>
 
       <v-btn
+        :to="localePath({ name: 'categories' })"
+        flat
+      >
+        Категории
+      </v-btn>
+
+      <!--
+      <v-btn
         :to="localePath({ name: 'routes' })"
         flat
       >
         {{ $t('app_toolbar_navigation_routes') }}
-      </v-btn>
+      </v-btn>-->
 
       <v-btn
         :to="localePath({ name: 'debug' })"
@@ -102,7 +110,7 @@
           <v-card>
             <v-card-text>
               <!--solo-->
-              <!--flat-->
+              <!--text-->
               <v-text-field
                 v-validate="'required|' + $formValidator.rules.email"
                 v-model="form.email"

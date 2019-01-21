@@ -1,95 +1,100 @@
 <template>
-  <section class="w-100 h-100">
-    <nuxt-link :to="localePath({ name: 'posts-page', params: { page: 1 } })">
-      Посты
-    </nuxt-link>
+  <div class="w-100 h-100">
+    <h1 class="mt-5">
+      Все посты
+    </h1>
 
-    <v-layout justify-center>
-      <v-flex xs4>
-        <apollo-mutation
-          :mutation="CREATE_POST_MUTATION"
-          :variables="{
-            input
-          }"
-          @done="onDone"
-        >
-          <template slot-scope="{ mutate, loading, error }">
-            <v-text-field
-              v-model="input.title"
-              label="Title"
-              single-line
-            />
+    <p>
+      <b>Постов на странице: </b> {{ posts.paginatorInfo.count }}.
+      <b>Постов всего: </b> {{ posts.paginatorInfo.total }}.
+    </p>
 
-            <v-text-field
-              v-model="input.text"
-              label="Text"
-              single-line
-            />
-            <!--</v-flex>-->
-            <!--mutate()-->
-            <v-btn
-              :loading="loading"
-              color="primary"
-              @click="mutate"
-            >
-              Создать пост
-            </v-btn>
-            <p v-if="error">
-              An error occured: {{ error }}
-            </p>
-          </template>
-        </apollo-mutation>
-      </v-flex>
-    </v-layout>
-    <!--
-    <v-btn @click="refetch">
-      Refetch
-    </v-btn>
-    hello: <b>{{ hello }}</b>
-    Global loading:
-    $apollo.loading
-    Local loading:
-    $apollo.queries.hello.loading
-    -->
-  </section>
+    <posts-list
+      v-if="posts.paginatorInfo.total"
+      :posts="posts.data"
+      :loading="loading"
+      :page="posts.paginatorInfo.currentPage"
+      :pages="posts.paginatorInfo.lastPage"
+      @page-change="onPageChange"
+    />
+    <v-alert
+      v-else
+      :value="true"
+      type="info"
+    >
+      Категория не содержит постов.
+    </v-alert>
+  </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue'
+import { Watch } from 'vue-property-decorator'
 import Component from '~/plugins/nuxt-class-component'
-import { CREATE_POST_MUTATION } from '~/apollo/queries/mutations/createPost'
-// import gql from 'graphql-tag'
+import PostsList from '~/components/pages/posts/PostsList'
+import { GET_ALL_POSTS_QUERY } from '~/apollo/queries/posts/getAllPosts'
 
 @Component({
-  // data: () => ({
-  //   hello: '222'
-  // })
-  // apollo: {
-  //   hello: {
-  //     query: gql`{hello}`
-  //   }
-  // }
+  components: { PostsList }
 })
-export default class Home extends Vue {
-  CREATE_POST_MUTATION = CREATE_POST_MUTATION
+export default class Posts extends Vue {
+  async asyncData ({ app }) {
+    const page = 1 // +page
 
-  input = {
-    title: 'My title', // null,
-    text: 'My text' // null
+    const posts = await getByPage(page, app)
+
+    // try {
+    return {
+      posts,
+      page
+    }
+    // } catch (e) {
+    //   if (e.response && e.response.status === 404) {
+    //     error({ statusCode: 404, message: app.i18n.t('posts_page_error_404') })
+    //   }
+    // }
   }
 
-  onDone (r) {
-    console.log('done', r)
-  }
+  public posts: any[] = []
+  public loading: boolean = false
+  public page: number | null = null
 
-  refetch () {
-    this.$apollo.queries.hello.refetch()
-  }
+  @Watch('page')
+  async onPageChange (page: number) {
+    // this.$router.push(
+    //   this.localePath({
+    //     name: 'posts-page',
+    //     params: { page: page.toString() }
+    //   })
+    // )
 
-  // created () {
-  //   this.$apollo.addSmartQuery('hello', {
-  //     query: gql`{hello}`
-  //   })
-  // }
+    // TODO ActionWithLoading
+    this.loading = true
+    this.posts = await getByPage(page, this)
+    this.loading = false
+  }
+}
+
+async function getByPage (page: number = 1, context = this) {
+  /*
+  {
+    data: posts,
+      paginatorInfo: {
+        lastPage: pages
+      }
+  } */
+  const {
+    data: {
+      allPosts: posts
+    }
+  } = await context.$apollo.query({
+    query: GET_ALL_POSTS_QUERY,
+    variables: {
+      page,
+      perPage: 8
+    }
+  })
+
+  return posts
 }
 </script>

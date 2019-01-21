@@ -53,14 +53,10 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import { namespace } from 'vuex-class'
 import { Watch } from 'vue-property-decorator'
 import Component from '~/plugins/nuxt-class-component'
-import * as BackendRoutes from '~/store/modules/BackendRoutes'
-import Post from '~/components/Post'
-import { GET_POSTS_QUERY } from '~/apollo/queries/getPosts'
-
-const BackendRoutesModule = namespace(BackendRoutes.NAME)
+import Post from '~/components/pages/posts/Post'
+import { GET_ALL_POSTS_QUERY } from '~/apollo/queries/posts/getAllPosts'
 
 @Component({
   components: {
@@ -88,8 +84,6 @@ export default class Posts extends Vue {
   public page: number | null = null
   public pages: number | null = null
 
-  @BackendRoutesModule.State routes
-
   @Watch('page')
   async onPageChange (page: number) {
     this.$router.push(
@@ -111,13 +105,15 @@ export default class Posts extends Vue {
 async function getByPage (page: number = 1, context = this) {
   const {
     data: {
-      paginatedPosts: {
-        posts,
-        pageInfo: { pagesCount: pages }
+      allPosts: {
+        data: posts,
+        paginatorInfo: {
+          lastPage: pages
+        }
       }
     }
   } = await context.$apollo.query({
-    query: GET_POSTS_QUERY,
+    query: GET_ALL_POSTS_QUERY,
     variables: {
       page
     }

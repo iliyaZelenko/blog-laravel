@@ -24,4 +24,5 @@ Route::fallback(function() {
     return response()->json(['message' => 'Route not Found!'], 404);
 });
 
+// TODO это что?
 \Request::create('/ip-ban', 'GET', ['parameter' => 'value']);

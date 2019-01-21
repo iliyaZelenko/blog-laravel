@@ -1,8 +1,6 @@
 <?php
 
 use Illuminate\Database\Seeder;
-use App\User;
-use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
@@ -11,23 +9,14 @@ class DatabaseSeeder extends Seeder
      *
      * @return void
      */
-    public function run()
+    public function run(): void
     {
-
-        if (User::count() < 10) {
-            factory(User::class, 5)->create();
-        }
-
-        if (!User::where('name', 'Vladimir Putin')->first()) {
-            factory(User::class)->create([
-                'name' => 'Vladimir Putin',
-                'email' => 'test@test.com',
-                'password' => Hash::make('password')
-            ]);
-        }
-
-        $this->call(ScopesTableSeeder::class);
-        $this->call(CategoriesTableSeeder::class);
-        $this->call(QuestionsTableSeeder::class);
+        $this
+            ->call(UsersTableSeeder::class)
+            ->call(CategoriesTableSeeder::class)
+            ->call(TagsTableSeeder::class)
+            ->call(PostsTableSeeder::class)
+            ->call(CommentsTableSeeder::class)
+        ;
     }
 }

@@ -17,7 +17,7 @@ use Carbon\Carbon;
 
 $faker = \Faker\Factory::create('en_US');// Faker::create('ru_RU');
 
-$factory->define(App\Category::class, function () use ($faker) {
+$factory->define(App\Models\Category::class, function () use ($faker) {
     $name = $faker->firstName;//$faker->sentence;
 
     return [

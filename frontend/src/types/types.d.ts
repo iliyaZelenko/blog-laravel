@@ -26,6 +26,7 @@ declare global {
   namespace NodeJS {
     interface Process {
       browser: boolean
+      server: boolean
     }
     // interface Global {
     //   spotConfig: any
@@ -34,6 +35,7 @@ declare global {
 
   interface Window {
     onNuxtReady: any
+    $nuxt: any
   }
 }
 

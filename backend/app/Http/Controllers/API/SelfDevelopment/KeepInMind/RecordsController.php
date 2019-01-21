@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\API\SelfDevelopment\KeepInMind;
 
-use App\KeepInMindRecord;
+use App\Models\KeepInMindRecord;
 use App\Http\Controllers\API\BaseController;
 use Illuminate\Http\Request;
 

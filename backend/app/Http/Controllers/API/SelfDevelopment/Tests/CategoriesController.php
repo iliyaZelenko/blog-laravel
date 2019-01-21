@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\API\SelfDevelopment\Tests;
 
-use App\Category;
+use App\Models\Category;
 use App\Http\Controllers\API\BaseController;
 
 class CategoriesController extends BaseController

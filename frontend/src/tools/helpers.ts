@@ -4,6 +4,17 @@ import Vue from 'vue'
 
 export const vp = Vue.prototype
 
+// show error for server or client
+export function showErrorUniversal (error, context: any = null) {
+  if (process.server && context) {
+    const { app } = context
+
+    app.$cookies.set('showErrorInBrowser', error)
+  } else {
+    vp.$notify.error(error)
+  }
+}
+
 // primary subtag + optional subtag
 // export function getFullLocale (): string {
 //   return getLocale()

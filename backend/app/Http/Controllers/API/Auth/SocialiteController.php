@@ -7,7 +7,7 @@ use App\Http\Controllers\API\BaseController;
 use Socialite;
 use App\Traits\PassportToken;
 use App\Traits\Socialite as SocialiteTrait;
-use App\User;
+use App\Models\User;
 // use Laravel\Socialite\Facades\Socialite;
 use App\Traits\EmailVerification;
 use App\SocialiteProvider;

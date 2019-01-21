@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\API\SelfDevelopment\KeepInMind;
 
-use App\Category;
+use App\Models\Category;
 use App\Http\Controllers\API\BaseController;
 
 // TODO подобных контроллеров будет много, надо наследовать похожую логику от базового

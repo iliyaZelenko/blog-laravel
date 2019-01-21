@@ -5,10 +5,6 @@
     <v-content>
       <!-- fluid -->
       <v-container style="height: 100%; width: 100%;">
-        <h1 class="text-center">
-          {{ $t('blog_title') }}
-        </h1>
-
         <v-layout
           class="pt-3"
           column

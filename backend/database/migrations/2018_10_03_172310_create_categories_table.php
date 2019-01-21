@@ -29,14 +29,16 @@ class CreateCategoriesTable extends Migration {
             $table->text('name');
             $table->string('name_slug');
             $table->string('path');
-            $table->unsignedInteger('scope_id');
+//            $table->unsignedInteger('scope_id');
             $table->text('description')->nullable();
-//            $table->integer('questions_count')->default(0);
+            $table->integer('posts_count')->default(0);
+            $table->integer('all_posts_count')->default(0);
 //            $table->string('img')->nullable();
 
-            $table->foreign('scope_id')
-                ->references('id')
-                ->on('scopes')->onDelete('cascade');
+//            $table->foreign('scope_id')
+//                ->references('id')
+//                ->on('scopes')
+//                ->onDelete('cascade');
 
 
             $table->timestamps();

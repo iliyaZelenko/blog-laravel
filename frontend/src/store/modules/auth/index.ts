@@ -20,14 +20,17 @@ const tokenSecondBeforeExpired = 50 // seconds before token expired, uses for re
 // const moduleNamespace = 'auth/'
 let refreshTimeoutId: NodeJS.Timeout // = null
 
+// TODO добавил window.onNuxtReady а то почему то оно undefined (странно)
 if (process.browser) {
-  window.onNuxtReady(({ $store }) => {
-    const { context } = $store._modules.root._children.auth // state,
-    // console.log(state, $store.state.auth)
-    setTimeoutTokenRefresh(context) // $store.state.auth, context.dispatch
+  window.addEventListener('load', () => {
+    // console.log(window.onNuxtReady, window.$nuxt)
+    // window.onNuxtReady(({ $store }) => {
+    const { context } = window.$nuxt.$store._modules.root._children.auth
+
+    setTimeoutTokenRefresh(context)
+    // })
   })
 }
-
 // TODO указать точные типы
 export interface State {
   brow: any,
@@ -59,7 +62,7 @@ export const state = (): State => {
 
 export const actions: Actions<State, RootState> = {
   async setServerState ({ commit }, { app }) {
-    console.log('initSetState')
+    // console.log('initSetState')
     // console.log(app.$cookies.get(localStorageKeys.user))
     const tokenInfo = {
       accessToken: app.$cookies.get(localStorageKeys.token),
@@ -118,10 +121,13 @@ export const actions: Actions<State, RootState> = {
     try {
       tokenInfo = await vp.$post('auth/refresh')
     } catch (e) {
+      vp.$notify.info('Token refresh error.', 'Looks like a network error has occurred. Please, refresh the page.', {
+        timeout: 20000
+      })
       // if network error, try request again through recursion
-      setTimeout(() => {
-        dispatch('refresh')
-      }, 500)
+      // setTimeout(() => {
+      //   dispatch('refresh')
+      // }, 500)
       return // stop function
     }
 
@@ -166,7 +172,7 @@ export const actions: Actions<State, RootState> = {
   async init (context, { app }) {
     const { state, dispatch, getters } = context
     // console.log('init', this.$router)
-    console.log('init')
+    // console.log('init')
 
     await dispatch('setServerState', { app })
 
@@ -204,7 +210,6 @@ export const mutations: MutationTree<State> = {
     return user
   },
   [TOKEN] (state, token) {
-    console.log('token_global') // , token
     state.token = (token && token.accessToken) || ''
     state.tokenExpiresIn = +(token && token.expiresIn) || ''
     state.refreshTokenExpiresIn = +(token && token.refreshTokenExpiresIn) || ''
@@ -231,6 +236,8 @@ export const mutations: MutationTree<State> = {
   [USER_LOGGED_IN] (state, payloadAsContext) {
     const { rootState } = payloadAsContext
     state.refreshTokenAlreadyExpired = false
+
+    console.log(rootState)
 
     if (rootState.meta.guest) {
       this.$router.push(this.localePath({

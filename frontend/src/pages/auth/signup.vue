@@ -86,7 +86,7 @@
           </v-card-actions>
 
           <div class="text-xs-center pb-3">
-            <router-link :to="{ name: 'auth-signin' }">
+            <router-link :to="localePath({ name: 'auth-signin' })">
               Already have an account?
             </router-link>
           </div>
@@ -102,6 +102,7 @@ import { mapActions } from 'vuex'
 
 export default {
   name: 'Signup',
+  middleware: 'guest',
   meta: {
     guest: true
   },

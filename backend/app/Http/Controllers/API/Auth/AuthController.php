@@ -3,7 +3,7 @@ namespace App\Http\Controllers\API\Auth;
 
 use App\Http\Controllers\API\BaseController;
 use Illuminate\Http\Request;
-use App\User;
+use App\Models\User;
 use App\Http\Requests\Auth\SignupRequest;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Traits\AuthTokenResponses;

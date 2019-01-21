@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\API\SelfDevelopment;
 
-use App\Scope;
+use App\Models\Scope;
 use App\Http\Controllers\API\BaseController;
 
 class ScopesController extends BaseController

@@ -19,6 +19,8 @@ class Kernel extends HttpKernel
         \App\Http\Middleware\TrimStrings::class,
         \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
         \App\Http\Middleware\TrustProxies::class,
+        // I would prefer to leave it only in api, but this caused me an error for the route /graphql
+        \Barryvdh\Cors\HandleCors::class,
     ];
 
     /**
@@ -38,7 +40,7 @@ class Kernel extends HttpKernel
         ],
 
         'api' => [
-            \Barryvdh\Cors\HandleCors::class,
+//            \Barryvdh\Cors\HandleCors::class,
             'throttle:60,1',
             'bindings',
         ],
