@@ -5,6 +5,10 @@ export const ROOT_DIR = __dirname
 // TODO возможно это как-то убрать чтобы не усложнять конфиг
 export const SRC_DIR = join(ROOT_DIR, 'src')
 export const STYLES_DIR = join(SRC_DIR, 'styles')
+export const CONFIGS_DIR = join(SRC_DIR, 'configs')
+export const PAGES_EXTENDED_DIR = join(SRC_DIR, 'pagesExtendRoutes')
+export const PLUGINS_DIR = join(SRC_DIR, 'plugins')
+export const I18N_DIR = join(SRC_DIR, 'i18n')
 
 /* URL */
 export const BASE_URL = process.env.BASE_URL || 'http://localhost:3000'

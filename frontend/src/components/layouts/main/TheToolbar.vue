@@ -47,12 +47,14 @@
         :to="localePath({ name: 'debug' })"
         flat
       >
-        <v-icon left>error_outline</v-icon>
+        <v-icon left>
+          error_outline
+        </v-icon>
         Debug
       </v-btn>
     </v-toolbar-items>
 
-    <v-spacer/>
+    <v-spacer />
     <!--
     &lt;!&ndash;solo-inverted&ndash;&gt;
     <v-text-field
@@ -96,7 +98,9 @@
             slot="activator"
             flat
           >
-            <v-icon left>lock</v-icon>
+            <v-icon left>
+              lock
+            </v-icon>
             <span
               class="pr-3"
               style="text-transform: none !important;"
@@ -112,8 +116,8 @@
               <!--solo-->
               <!--text-->
               <v-text-field
-                v-validate="'required|' + $formValidator.rules.email"
                 v-model="form.email"
+                v-validate="'required|' + $formValidator.rules.email"
                 :error-messages="errors.collect('email')"
                 data-vv-name="email"
                 label="Email"
@@ -121,8 +125,8 @@
               />
 
               <v-text-field
-                v-validate="$formValidator.rules.password"
                 v-model="form.password"
+                v-validate="$formValidator.rules.password"
                 :error-messages="errors.collect('password')"
                 data-vv-name="password"
                 label="Password"

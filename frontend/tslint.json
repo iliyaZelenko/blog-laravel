@@ -16,6 +16,7 @@
     "prefer-const": true,
     "ordered-imports": [false],
     "object-literal-sort-keys": [false],
+    "whitespace": false, // вызывало предупреждение вообще где не нужно
     // "no-implicit-dependencies": [true, "dev"],
 
     // it is important for the imports work

@@ -33,8 +33,8 @@
               @keydown.enter="submit"
             >
               <v-text-field
-                v-validate="'required|' + $formValidator.rules.email"
                 v-model="form.email"
+                v-validate="'required|' + $formValidator.rules.email"
                 :error-messages="errors.collect('email')"
                 type="email"
                 label="Почта"
@@ -45,8 +45,8 @@
               />
 
               <v-text-field
-                v-validate="$formValidator.rules.name"
                 v-model="form.name"
+                v-validate="$formValidator.rules.name"
                 :error-messages="errors.collect('name')"
                 type="text"
                 label="Имя"
@@ -57,8 +57,8 @@
               />
               <!--class="x-3 mt-2"-->
               <v-text-field
-                v-validate="$formValidator.rules.password"
                 v-model="form.password"
+                v-validate="$formValidator.rules.password"
                 :error-messages="errors.collect('password')"
                 :type="showPassword ? 'text' : 'password'"
                 :append-icon="showPassword ? 'visibility_off' : 'visibility'"
@@ -80,7 +80,9 @@
               block
               @click="submit"
             >
-              <v-icon left>how_to_reg</v-icon>
+              <v-icon left>
+                how_to_reg
+              </v-icon>
               Sign up
             </v-btn>
           </v-card-actions>
@@ -90,7 +92,6 @@
               Already have an account?
             </router-link>
           </div>
-
         </v-card>
       </v-flex>
     </v-layout>

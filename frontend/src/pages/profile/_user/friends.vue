@@ -62,7 +62,7 @@ export default {
   components: { Avatar },
   props: {
     page: {
-      type: String | Number,
+      type: [String, Number],
       default: 1
     }
   },
@@ -90,6 +90,8 @@ export default {
           return perPageBreakpoint[breakpoint]
         }
       }
+
+      throw new Error('No breakpoint found.')
     }
   },
   watch: {

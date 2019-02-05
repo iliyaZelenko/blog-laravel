@@ -41,8 +41,8 @@
               @keydown.enter="submit"
             >
               <v-text-field
-                v-validate="'required|' + $formValidator.rules.email"
                 v-model="form.email"
+                v-validate="'required|' + $formValidator.rules.email"
                 :error-messages="errors.collect('email')"
                 type="email"
                 label="Почта"
@@ -54,8 +54,8 @@
 
               <!--class="x-3 mt-2"-->
               <v-text-field
-                v-validate="$formValidator.rules.password"
                 v-model="form.password"
+                v-validate="$formValidator.rules.password"
                 :error-messages="errors.collect('password')"
                 :type="showPassword ? 'text' : 'password'"
                 :append-icon="showPassword ? 'visibility_off' : 'visibility'"
@@ -77,25 +77,30 @@
               block
               @click="submit"
             >
-              <v-icon left>directions_walk</v-icon>
+              <v-icon left>
+                directions_walk
+              </v-icon>
               Sign in
             </v-btn>
           </v-card-actions>
 
           <div class="text-xs-center pb-3">
-            <v-icon class="mr-1">help</v-icon>
+            <v-icon class="mr-1">
+              help
+            </v-icon>
             <router-link :to="{ name: 'auth-forgot-password' }">
               Forgot password?
             </router-link>
 
-            <span class="mx-3"/>
+            <span class="mx-3" />
 
-            <v-icon class="mr-1">person_add</v-icon>
+            <v-icon class="mr-1">
+              person_add
+            </v-icon>
             <router-link :to="{ name: 'auth-signup' }">
               Sign up
             </router-link>
           </div>
-
         </v-card>
       </v-flex>
     </v-layout>

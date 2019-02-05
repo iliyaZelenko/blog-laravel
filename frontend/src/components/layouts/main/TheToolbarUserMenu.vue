@@ -26,22 +26,28 @@
       <v-list>
         <v-list-tile :to="localePath({ name: 'profile-user', params: { user: $auth.user.id } })">
           <v-list-tile-action><v-icon>person</v-icon></v-list-tile-action>
-          <v-list-tile-content><v-list-tile-title>
-            Профиль
-          </v-list-tile-title></v-list-tile-content>
+          <v-list-tile-content>
+            <v-list-tile-title>
+              Профиль
+            </v-list-tile-title>
+          </v-list-tile-content>
         </v-list-tile>
         <v-list-tile :to="localePath({ name: 'settings' })">
           <v-list-tile-action><v-icon>settings</v-icon></v-list-tile-action>
-          <v-list-tile-content><v-list-tile-title>
-            Настройки
-          </v-list-tile-title></v-list-tile-content>
+          <v-list-tile-content>
+            <v-list-tile-title>
+              Настройки
+            </v-list-tile-title>
+          </v-list-tile-content>
         </v-list-tile>
         <!--.prevent-->
         <v-list-tile @click="$actionWithLoading(logout, 'loadingLogout')">
           <v-list-tile-action><v-icon>exit_to_app</v-icon></v-list-tile-action>
-          <v-list-tile-content><v-list-tile-title>
-            Выйти
-          </v-list-tile-title></v-list-tile-content>
+          <v-list-tile-content>
+            <v-list-tile-title>
+              Выйти
+            </v-list-tile-title>
+          </v-list-tile-content>
         </v-list-tile>
       </v-list>
     </v-card>

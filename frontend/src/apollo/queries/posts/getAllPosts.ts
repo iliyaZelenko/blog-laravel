@@ -13,6 +13,7 @@ export const GET_ALL_POSTS_QUERY = gql`
         }
       }
       paginatorInfo {
+        count
         currentPage
         perPage
         total

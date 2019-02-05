@@ -7,7 +7,7 @@
         class="mb-4"
       >
         <v-card-title>
-          <avatar/>
+          <avatar />
 
           <div class="ml-3">
             <b>{{ owner.name }}</b>
@@ -26,7 +26,9 @@
             icon
             large
           >
-            <v-icon color="green">thumb_up_alt</v-icon>
+            <v-icon color="green">
+              thumb_up_alt
+            </v-icon>
             <small>
               {{ post.thumbUp }}
             </small>
@@ -35,12 +37,13 @@
             icon
             large
           >
-            <v-icon color="red">thumb_down_alt</v-icon>
+            <v-icon color="red">
+              thumb_down_alt
+            </v-icon>
             <small>
               {{ post.thumbDown }}
             </small>
           </v-btn>
-
         </v-card-title>
         <v-card-text style="overflow-y: auto;">
           <div style="overflow: auto;">

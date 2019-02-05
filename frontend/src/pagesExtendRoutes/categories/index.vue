@@ -69,42 +69,9 @@ import CategoriesList from '~/components/pages/categories/CategoriesList'
 import CategoriesBreadcrumbs from '~/components/pages/categories/CategoriesBreadcrumbs'
 import CategoriesToolbar from '~/components/pages/categories/CategoriesToolbar'
 import PostsList from '~/components/pages/posts/PostsList'
-import { GET_CATEGORY_QUERY } from '~/apollo/queries/categories/getCategory'
+import { GET_CATEGORY_QUERY, CategoryInterface, PostsInterface } from '~/apollo/queries/categories/getCategory'
 import { GET_ROOT_CATEGORIES_QUERY } from '~/apollo/queries/categories/getRootCategories'
 import { GET_CATEGORY_POSTS_QUERY } from '~/apollo/queries/posts/getCategoryPosts'
-
-// интерфейс именно получаемой категории через GraphQL, поэтому этот интерфейс не нужно обобщать
-interface CategoryInterface {
-  id: number
-  name: string
-  path: string
-  children: any[]
-  ancestorsAndSelfInfo: any
-  haveChild: boolean
-  // postsCount: number,
-  // allPostsCount: number,
-  posts: PostsInterface
-}
-
-interface PostsInterface {
-  data: PostInterface[]
-  paginatorInfo: {
-    lastPage: number
-    currentPage: number
-    count: number
-    total: number
-  }
-}
-
-interface PostInterface {
-  id: number
-  title: string
-  contentShort: string
-  user: {
-    nickname: string
-    fullName: string
-  }
-}
 
 @Component({
   components: {

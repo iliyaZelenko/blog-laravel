@@ -6,7 +6,6 @@
       lazy-src="https://practice.privatbank.ua/Content/images/no-avatar.png"
       aspect-ratio="1"
       class="grey lighten-2"
-
     >
       <v-layout
         slot="placeholder"
@@ -33,12 +32,11 @@
           <v-list-tile-sub-title>{{ $auth.user.email }}</v-list-tile-sub-title>
         </v-list-tile-content>
         <v-list-tile-action>
-
           <v-icon>chat</v-icon>
         </v-list-tile-action>
       </v-list-tile>
 
-      <v-divider inset/>
+      <v-divider inset />
 
       <v-list-tile>
         <v-list-tile-action>
@@ -55,7 +53,7 @@
         </v-list-tile-action>
       </v-list-tile>
 
-      <v-divider inset/>
+      <v-divider inset />
 
       <v-list-tile>
         <v-list-tile-action>
@@ -68,7 +66,7 @@
         </v-list-tile-content>
       </v-list-tile>
 
-      <v-divider inset/>
+      <v-divider inset />
 
       <v-list-tile>
         <v-list-tile-action>
@@ -82,7 +80,7 @@
       </v-list-tile>
     </v-list>
 
-    <div id="map"/>
+    <div id="map" />
   </div>
 </template>
 

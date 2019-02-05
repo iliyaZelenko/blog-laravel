@@ -12,12 +12,14 @@
           class="category__img"
           @click="$emit('select', category)"
         >
-          <div class="fill-height bottom-gradient"/>
+          <div class="fill-height bottom-gradient" />
         </v-img>
 
         <v-card-title primary-title>
           <div>
-            <div class="headline">{{ category.name }}</div>
+            <div class="headline">
+              {{ category.name }}
+            </div>
             <!--
             <span class="grey&#45;&#45;text">
               {{ category.description || 'No description given' }}

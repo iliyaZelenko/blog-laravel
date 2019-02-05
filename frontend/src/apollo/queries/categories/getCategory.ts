@@ -40,3 +40,36 @@ export const GET_CATEGORY_QUERY = gql`
     }
   }
 `
+
+// интерфейс именно получаемой категории через GraphQL, поэтому этот интерфейс не нужно обобщать
+export interface CategoryInterface {
+  id: number
+  name: string
+  path: string
+  children: any[]
+  ancestorsAndSelfInfo: any
+  haveChild: boolean
+  // postsCount: number,
+  // allPostsCount: number,
+  posts: PostsInterface
+}
+
+export interface PostsInterface {
+  data: PostInterface[]
+  paginatorInfo: {
+    lastPage: number
+    currentPage: number
+    count: number
+    total: number
+  }
+}
+
+export interface PostInterface {
+  id: number
+  title: string
+  contentShort: string
+  user: {
+    nickname: string
+    fullName: string
+  }
+}

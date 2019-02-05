@@ -1,10 +1,9 @@
 <template>
   <div>
     <v-btn
-      v-for="locale in $i18n.locales"
-      v-if="locale.code !== $i18n.locale"
+      v-for="locale in availableLocales"
       :key="locale.code"
-      :to="switchLocalePath(locale.code)"
+      :to="path(locale)"
       color="primary lighten-1"
       size="mini"
       nuxt
@@ -23,11 +22,18 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import Component from 'nuxt-class-component'
+import Component from '~/plugins/nuxt-class-component'
 
 @Component
-class LocaleSwitcher extends Vue {
-}
+export default class LocaleSwitcher extends Vue {
+  path (locale) {
+    return decodeURIComponent(
+      this.switchLocalePath(locale.code)
+    )
+  }
 
-export default LocaleSwitcher
+  get availableLocales () {
+    return this.$i18n.locales.filter(i => i.code !== this.$i18n.locale)
+  }
+}
 </script>

@@ -16,7 +16,9 @@
         })"
         color="primary"
       >
-        <v-icon left>security</v-icon>
+        <v-icon left>
+          security
+        </v-icon>
         Профиль
       </v-btn>
 
@@ -25,7 +27,9 @@
         color="amber"
         nuxt
       >
-        <v-icon left>how_to_reg</v-icon>
+        <v-icon left>
+          how_to_reg
+        </v-icon>
         Sign up
       </v-btn>
 
@@ -34,7 +38,9 @@
         color="green"
         nxut
       >
-        <v-icon left>directions_walk</v-icon>
+        <v-icon left>
+          directions_walk
+        </v-icon>
         Sign in
       </v-btn>
     </div>
@@ -44,21 +50,27 @@
 
       <br>
 
-      <b>User: </b><span v-show="!$auth.loggedIn">–</span>
+      <b>User: </b><span v-show="!$auth.loggedIn">
+        –
+      </span>
       <pre
         v-if="$auth.user"
         class="pl-4"
       >{{ $auth.user }}</pre>
       <br v-else>
 
-      <b class="mb-2">Token: </b>
+      <b class="mb-2">
+        Token:
+      </b>
       <span
         v-if="token"
         :title="token"
       >
         {{ token.slice(0, 40) + '...' }}
       </span>
-      <span v-else>–</span>
+      <span v-else>
+        –
+      </span>
 
       <br>
 
@@ -66,7 +78,6 @@
       <br>
       <b>Refresh token expiration:</b> <span v-html="refreshTokenExpiresInFormated || ' –'" />
     </div>
-
   </v-layout>
 </template>
 

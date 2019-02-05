@@ -1,6 +1,5 @@
 <template>
   <section class="w-100 h-100">
-
     <v-switch
       v-model="hideInternalRoutes"
       label="Скрыть внутренние роуты"

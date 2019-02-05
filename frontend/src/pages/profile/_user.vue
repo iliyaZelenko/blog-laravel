@@ -3,7 +3,9 @@
     v-if="owner"
     style="width: 100%;"
   >
-    <h1 class="display-2">{{ owner.name }}</h1>
+    <h1 class="display-2">
+      {{ owner.name }}
+    </h1>
 
     <v-layout
       flex

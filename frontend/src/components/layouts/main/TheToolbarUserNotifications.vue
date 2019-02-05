@@ -25,8 +25,12 @@
         color="red"
         overlap
       >
-        <span slot="badge">2</span>
-        <v-icon medium>notifications</v-icon>
+        <span slot="badge">
+          2
+        </span>
+        <v-icon medium>
+          notifications
+        </v-icon>
       </v-badge>
     </v-btn>
     <v-card>
@@ -48,11 +52,15 @@
               <v-icon
                 v-if="selected.indexOf(index) < 0"
                 color="grey lighten-1"
-              >visibility</v-icon>
+              >
+                visibility
+              </v-icon>
               <v-icon
                 v-else
                 color="yellow darken-2"
-              >visibility</v-icon>
+              >
+                visibility
+              </v-icon>
             </v-list-tile-action>
           </v-list-tile>
           <v-divider

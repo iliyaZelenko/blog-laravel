@@ -1,0 +1,24 @@
+<template>
+  <div class="w-100 h-100">
+    <h1 class="mt-5">
+      {{ id }} | {{ slug }}
+    </h1>
+
+    {{ $route.params }}
+
+    Post page
+  </div>
+</template>
+
+<script lang="ts">
+import Vue from 'vue'
+import { Prop } from 'vue-property-decorator'
+import Component from '~/plugins/nuxt-class-component'
+
+@Component({
+})
+export default class Post extends Vue {
+  @Prop(Number) id!: number
+  @Prop(String) slug!: string
+}
+</script>
