@@ -33,6 +33,8 @@ class CreateCategoriesTable extends Migration {
             $table->text('description')->nullable();
             $table->integer('posts_count')->default(0);
             $table->integer('all_posts_count')->default(0);
+            $table->integer('children_count')->default(0);
+            $table->integer('all_children_count')->default(0);
 //            $table->string('img')->nullable();
 
 //            $table->foreign('scope_id')

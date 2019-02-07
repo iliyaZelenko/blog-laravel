@@ -7,12 +7,14 @@ type Category {
     parentId: ID! @rename(attribute: "parent_id")
     postsCount: Int! @rename(attribute: "posts_count")
     allPostsCount: Int! @rename(attribute: "all_posts_count")
-    haveChild: Boolean! @rename(attribute: "have_child")
+    haveChild: Boolean! # @rename(attribute: "have_child")
     createdAt: DateTime! @rename(attribute: "created_at")
     updatedAt: DateTime! @rename(attribute: "updated_at")
-    ancestorsAndSelfInfo: [AncestorsAndSelfInfo!]! @rename(attribute: "ancestors_and_self_info")
+    ancestorsAndSelfInfo: [AncestorsAndSelfInfo!]! # @rename(attribute: "ancestors_and_self_info")
     posts: [Post] @hasMany(type: "paginator")
     children: [Category] @hasMany
+    childrenCount: Int! @rename(attribute: "children_count")
+    allChildrenCount: Int! @rename(attribute: "all_children_count")
 }
 
 type AncestorsAndSelfInfo {

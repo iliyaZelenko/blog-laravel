@@ -3,7 +3,8 @@ const { LOCALES, DEFAULT_LOCALE, BASE_URL, FALLBACK_LOCALE, I18N_DIR } = global.
 const i18nMessages = require(join(I18N_DIR, 'messages')).default
 
 export default [
-  '~/modules/typescript.js',
+  // '~/modules/myModule.ts',
+  '~/modules/typescript',
   '@nuxtjs/apollo',
   '@nuxtjs/style-resources',
   'cookie-universal-nuxt',

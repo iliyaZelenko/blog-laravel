@@ -64,45 +64,52 @@
 
 <script lang="ts">
 import Vue from 'vue'
+import { Inject } from 'vue-inversify-decorator'
+import { Prop } from 'vue-property-decorator'
 import Component from '~/plugins/nuxt-class-component'
 import CategoriesList from '~/components/pages/categories/CategoriesList'
 import CategoriesBreadcrumbs from '~/components/pages/categories/CategoriesBreadcrumbs'
 import CategoriesToolbar from '~/components/pages/categories/CategoriesToolbar'
 import PostsList from '~/components/pages/posts/PostsList'
-import { GET_CATEGORY_QUERY, CategoryInterface, PostsInterface } from '~/apollo/queries/categories/getCategory'
-import { GET_ROOT_CATEGORIES_QUERY } from '~/apollo/queries/categories/getRootCategories'
-import { GET_CATEGORY_POSTS_QUERY } from '~/apollo/queries/posts/getCategoryPosts'
+import { CategoryInterface } from '~/apollo/schema/categories'
+import { TYPES } from '~/configs/dependencyInjection/types'
+import {
+  CategoryRepositoryInterface,
+  PathGeneratorInterface,
+  PostRepositoryInterface
+} from '~/configs/dependencyInjection/interfaces'
+import { serviceContainer } from '~/configs/dependencyInjection/container'
+
+// это используется не только в классе, а в функции, потому что asyncData не имеет this
+const PathGenerator = serviceContainer.get<PathGeneratorInterface>(TYPES.PathGeneratorInterface)
 
 @Component({
   components: {
     CategoriesList, CategoriesBreadcrumbs, CategoriesToolbar, PostsList
-  },
-  props: {
-    path: {
-      type: String,
-      default: ''
-    },
-    id: {
-      type: String,
-      default: null
-    },
-    page: {
-      type: String,
-      default: '1'
-    }
   }
 })
 export default class Categories extends Vue {
+  @Prop({ default: '' }) path!: string
+  @Prop({ default: null }) id!: string | null
+  @Prop({ default: '1' }) page!: string
+
+  // @ts-ignore
+  @Inject(TYPES.PathGeneratorInterface) private pathGenerator!: PathGeneratorInterface
+  // @ts-ignore
+  @Inject(TYPES.CategoryRepositoryInterface) private categoryRepo!: CategoryRepositoryInterface
+  @Inject(TYPES.PostRepositoryInterface) private postRepo!: PostRepositoryInterface
+
+  // типо static (не имеет this)
   async asyncData ({ app, redirect, error, params: { path, id, page } }) {
+    // app.$container
+    const CategoryRepository = serviceContainer.get<CategoryRepositoryInterface>(TYPES.CategoryRepositoryInterface)
     const pathWithSlash = '/' + path
 
-    // TODO было path
     if (id) {
       // Если передавать path, то так: decodeURIComponent(pathWithSlash)
-      const category = await getCategory.apply(app, [id, +page])
-      const maxPage = category.posts.paginatorInfo.lastPage
+      const category = await CategoryRepository.getCategory(id, +page)
 
-      console.log(category)
+      // console.log(category)
 
       if (!category) {
         return error({
@@ -110,24 +117,24 @@ export default class Categories extends Vue {
           message: 'категория не найдена'
         })
       }
+
+      const maxPage = category.posts.paginatorInfo.lastPage
+
       if (page > maxPage) {
         // TODO возможно просто page = posts.paginatorInfo.lastPage
         return error({
           statusCode: 404,
-          message: `страница ${page} не существует, последняя страница: ${maxPage}.`
+          message: `страница ${page} не существует, последняя страница: ${maxPage}`
         })
       }
-
       if (category.path !== pathWithSlash) {
-        redirect(this.getCategoryPath(category))
+        redirect(getCategoryPath(category))
       }
-
-      // console.log(category)
 
       return { selectedCategory: category, categories: [] }
     }
 
-    return { categories: await getRootCategories.apply(app) } // await app.$get('categories')
+    return { categories: await CategoryRepository.getRootCategories() }
   }
 
   search: string | null = null
@@ -138,34 +145,29 @@ export default class Categories extends Vue {
   breadcrumbsItemsStart = [
     {
       name: 'Главная',
-      onClick: () => {
-        // TODO this.$router.push
-        location.href = this.localePath('index')
-        // this.$router.push(
-        //   this.localePath('index')
-        // )
+      onClick () {
+        // this.loading = true
+
+        this.$router.push(
+          this.pathGenerator.generate('index')
+          // () => { this.loading = false }
+        )
       }
     },
     {
       name: 'Категории',
-      onClick: () => {
-        // document.location.reload()
-        // location.href = '/categories'
-        // TODO this.$router.push
-        location.href = this.localePath('categories')
+      onClick () {
+        location.href = this.pathGenerator.generate('categories')
 
-        // this.selectedCategory = null
-        // this.categories = []
+        // this.$router.push не правильн оменяет страинцу, даже если обнулять состояние
         // this.$router.push(
-        //   this.localePath('categories')
+        //   this.pathGenerator.generate('categories'),
+        //   () => {
+        //     this.selectedCategory = null
+        //     getRootCategories.apply(this)
+        //   }
         // )
-
-        // this.selectedCategory = null
-        // this.categories = []
-        // this.$router.push(
-        //   this.localePath('category-with-path')
-        // )
-      } // /self-development
+      }
     }
   ]
 
@@ -200,7 +202,6 @@ export default class Categories extends Vue {
     if (this.selectedCategory) {
       // console.log('selectedCategory', this.selectedCategory)
       result.push(
-        // TODO норм case
         ...this.selectedCategory.ancestorsAndSelfInfo
       )
     }
@@ -211,32 +212,33 @@ export default class Categories extends Vue {
     }))
   }
 
+  // хоть это и возвращает промис в лбом случае, но если писать Promise<PostsInterface>, то TSLint дает ошибку при =
+  async getPostsByPage (page: number = 1) {
+    if (!this.selectedCategory || !this.selectedCategory.id) {
+      throw new Error('getPostsByPage требует чтобы this.selectedCategory была категорией')
+    }
+
+    return this.postRepo.getCategoryPosts(this.selectedCategory.id, page)
+  }
+
   async onPageChange (newPage) {
     if (!this.selectedCategory) return
 
     this.loadingPosts = true
-    this.selectedCategory.posts = await getPostsByPage.apply(this, [newPage])
+    // !!! Тут нет ошибки, IDE ошибается
+    this.selectedCategory.posts = await this.getPostsByPage(newPage)
     this.loadingPosts = false
 
     this.$router.replace(
-      this.getCategoryPath(this.selectedCategory, newPage)
+      getCategoryPath(this.selectedCategory, newPage)
     )
-
-    // const path = this.getCategoryPath(this.selectedCategory, newPage)
-    //
-    // this.loadingPosts = true
-    // this.$router.push(path, () => {
-    //   this.loadingPosts = false
-    // })
-
-    // console.log('result', this.selectedCategory.posts)
   }
 
   async onSelectCategory (category) {
     if (category.onClick) {
-      category.onClick()
+      category.onClick.apply(this)
     } else {
-      const path = this.getCategoryPath(category)
+      const path = getCategoryPath(category)
 
       this.loadingCategory = category
 
@@ -245,65 +247,16 @@ export default class Categories extends Vue {
       })
     }
   }
-
-  getCategoryPath (category, page = '1') {
-    return decodeURIComponent(
-      this.localePath({
-        name: 'category-with-path',
-        params: {
-          path: category.path.slice(1),
-          id: category.id,
-          page
-        }
-      })
-    )
-  }
 }
 
-async function getCategory (id, page): Promise<CategoryInterface> {
-  const { data: { category } } = await this.$apollo.query({
-    query: GET_CATEGORY_QUERY,
-    variables: { id, page }
-  })
-
-  // console.log('category', category)
-
-  return category
-}
-
-async function getRootCategories (): Promise<CategoryInterface[]> {
-  const { data: { rootCategories } } = await this.$apollo.query({
-    query: GET_ROOT_CATEGORIES_QUERY
-  })
-
-  // console.log('category', category)
-
-  return rootCategories
-}
-
-async function getPostsByPage (page: number = 1): Promise<PostsInterface> {
-  /*
-    {
-      data: posts,
-      paginatorInfo: {
-        lastPage: pages
-      }
-    }
-   */
-  const {
-    data: {
-      category: {
-        posts
-      }
-    }
-  } = await this.$apollo.query({
-    query: GET_CATEGORY_POSTS_QUERY,
-    variables: {
-      page,
-      id: this.selectedCategory.id
+function getCategoryPath (category, page = '1') {
+  return PathGenerator.generate({
+    name: 'category-with-path',
+    params: {
+      path: category.path.slice(1),
+      id: category.id,
+      page
     }
   })
-
-  return posts
 }
 </script>

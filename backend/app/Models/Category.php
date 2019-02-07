@@ -3,6 +3,8 @@
 namespace App\Models;
 
 
+use Illuminate\Database\Eloquent\Relations\HasMany;
+
 class Category extends BaseModelBaum {
 
     protected $table = 'categories';
@@ -30,7 +32,9 @@ class Category extends BaseModelBaum {
         'description',
         'parent_id',
         'posts_count',
-        'all_posts_count'
+        'all_posts_count',
+        'children_count',
+        'all_children_count'
     ];
 
     protected $guarded = [
@@ -46,19 +50,10 @@ class Category extends BaseModelBaum {
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
-//    public function keepInMindRecords()
-//    {
-//        return $this->hasMany(KeepInMindRecord::class);
-//    }
-
-
-    /**
      * Какие Accessors при сериализации должны быть выданы
      */
 //    TODO возможно чтобы не делать rename тут можно сразу написать camelCase
-    protected $appends = ['have_child', 'ancestors_and_self_info', 'path_info']; // , 'path'
+    protected $appends = ['haveChild', 'ancestorsAndSelfInfo', 'childrenCount', 'allChildrenCount']; // , 'path', 'path_info'
 
     public function getHaveChildAttribute()
     {
@@ -95,30 +90,29 @@ class Category extends BaseModelBaum {
      *
      * @return \Illuminate\Support\Collection
      */
-    public function getPathInfoAttribute()
-    {
-        return $this->getAncestorsAndSelf()->pluck('name', 'id');
-    }
+//    public function getPathInfoAttribute()
+//    {
+//        return $this->getAncestorsAndSelf()->pluck('name', 'id');
+//    }
 
     /**
      * Есть ли дети у категории
      *
      * @return bool
      */
-    public function haveChild()
+    public function haveChild(): bool
     {
         // TODO $this->isLeaf()
         return +$this->rgt - +$this->lft !== 1;
     }
 
-    // TODO красивы вынести или убрать
-    public function savePost($post)
+    // TODO красиво вынести или убрать
+    public function savePost(Post $post)
     {
-        $this->increment('all_posts_count');
         $this->increment('posts_count');
 
         // обновляет кол-во постов в родителських категориях
-        $this->ancestors()->get()->each(function($ancestor) {
+        $this->ancestorsAndSelf()->get()->each(function(Category $ancestor) {
             $ancestor->increment('all_posts_count');
         });
 //        $question->autor()->increment('messages_count');
@@ -128,18 +122,30 @@ class Category extends BaseModelBaum {
     }
 
     // TODO красивы вынести или убрать
-    public function deletePost($post) {
-        $this->decrement('all_posts_count');
+    public function deletePost(Post $post)
+    {
         $this->decrement('posts_count');
 
         // обновляет кол-во постов в родителських категориях
-        $this->ancestors()->get()->each(function ($ancestor) {
+        $this->ancestorsAndSelf()->get()->each(function (Category $ancestor) {
             $ancestor->decrement('all_posts_count');
         });
 //        $topic->autor()->decrement('messages_count');
 
         // удаляет пост
         $post->delete();
+    }
+
+    public function saveChildren(Category $category): void
+    {
+        $this->increment('children_count');
+
+        // обновляет кол-во детей в родителських категориях
+        $this->ancestorsAndSelf()->get()->each(function(Category $ancestor) {
+            $ancestor->increment('all_children_count');
+        });
+
+        $this->children()->save($category);
     }
 
 //    // TODO красиво вынести или убрать
@@ -173,16 +179,15 @@ class Category extends BaseModelBaum {
 //    }
 
     /**
-     * Дети и их дети
+     * Дети и их дети (рекурсивно все дети)
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function allChildren()
+    public function allChildren(): HasMany
     {
         return $this->children()->with([
-            'allChildren',
-//            'questions'
+            'allChildren'
         ]);
-//            ->withCount('questions as my_questions_count');
+        // ->withCount('questions as my_questions_count');
     }
 }

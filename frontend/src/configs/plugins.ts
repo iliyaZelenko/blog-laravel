@@ -6,6 +6,8 @@ export default processPlugins([
     src: 'notifications',
     ssr: false
   },
+  'serviceContainer',
+  'inject',
   'nuxt-class-component',
   'vuetify.js',
   'vue-plugin-axios/vue-plugin-axios.js',

@@ -18,6 +18,7 @@ declare global {
     }
     interface Global {
       appEnv: any
+      _$app: any
       // spotConfig: any
     }
   }
@@ -25,6 +26,7 @@ declare global {
   interface Window {
     onNuxtReady: any
     $nuxt: any
+    _$app: any
   }
 
   // interface IVueI18n {
@@ -49,7 +51,7 @@ declare module 'vue/types/vue' {
     switchLocalePath: any
     $apollo: any // ApolloProperty<any>
     // $vuetify: VuetifyObject,
-    // $router: VueRouter,
+    $router: VueRouter, // без этого не вызывает ошибку, но IDE подсвечивает крассным
     $cookies: NuxtCookies
     $auth: any
     $formValidator: any

@@ -1,6 +1,6 @@
 // import { store } from '@/store'
 // import { vp } from '@/tools/helpers'
-import { showErrorUniversal } from '@/tools/helpers'
+import { showErrorUniversal } from '~/tools/helpers'
 
 /**
  * If the user is already authenticated he shouldn't be able to visit

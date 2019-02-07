@@ -7,6 +7,8 @@ export const GET_ROOT_CATEGORIES_QUERY = gql`
       name
       description
       path
+      postsCount
+      allPostsCount
     }
   }
 `

@@ -5,9 +5,10 @@ type Query {
     # the current auth user (dont forget to provide auth header)
     me: User @auth
     users: [User!]! @paginate(type: "paginator" model: "User")
-    user(id: ID @eq): User @find(model: "User")
+    user(id: ID @eq): User @find
 
     ## Posts ##
+    post(id: ID @eq): Post @find
     allPosts: [Post!]! @paginate(type: "paginator" scopes: ["OrderByDESC"])
 
     ## Categories ##
@@ -48,31 +49,37 @@ type User {
     birthday: DateTime
     createdAt: DateTime! @rename(attribute: "created_at")
     updatedAt: DateTime! @rename(attribute: "updated_at")
-    posts: [Post] @hasMany(type: "paginator")
-    comments: [Comment] @hasMany(type: "paginator")
+    posts: [Post]! @hasMany(type: "paginator")
+    comments: [Comment]! @hasMany(type: "paginator")
 }
 
 type Post {
     id: ID!
     title: String!
+    titleSlug: String! @rename(attribute: "title_slug")
     content: String!
     contentShort: String! @rename(attribute: "content_short")
     user: User! @belongsTo
-    comments: [Comment] @hasMany(type: "paginator")
+    category: Category! @belongsTo
+    comments: [Comment]! @hasMany(type: "paginator")
+    tags: [Tag]! @belongsToMany
+    createdAt: DateTime! @rename(attribute: "created_at")
+    updatedAt: DateTime! @rename(attribute: "updated_at")
 }
 
 type Comment {
     id: ID!
     content: String!
     user: User! @belongsTo
-    post: User! @belongsTo
+    post: Post! @belongsTo
     repliedComment: User! @belongsTo
-    repliesComments: [Comment] @hasMany(type: "paginator")
+    repliesComments: [Comment]! @hasMany(type: "paginator")
 }
 
 type Tag {
     id: ID!
-
+    name: String!
+    about: String!
 }
 
 enum UserGenderStatus {

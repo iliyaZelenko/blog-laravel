@@ -77,12 +77,12 @@ export const actions: Actions<State, RootState> = {
     commit(TOKEN, tokenInfo)
     commit(USER, user)
   },
-  async signin ({ dispatch, commit }, form) {
+  async signin ({ dispatch }, form) {
     const loggedInData = await vp.$post('auth/signin', form)
 
     await dispatch('loggedIn', loggedInData)
   },
-  async signup ({ dispatch, commit }, form) {
+  async signup ({ dispatch }, form) {
     const loggedInData = await vp.$post('auth/signup', form)
     loggedInData.showMsg = false
 
@@ -250,6 +250,7 @@ export const mutations: MutationTree<State> = {
 
     setTimeoutTokenRefresh(payloadAsContext)
   },
+  // @ts-ignore
   [USER_LOGGED_OUT] (state, { manually, context: { rootState } }) {
     stopTokenRefresh()
 

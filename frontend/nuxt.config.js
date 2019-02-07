@@ -1,6 +1,15 @@
 import { join } from 'path'
 import * as env from './env'
 
+// declare global {
+//   namespace NodeJS {
+//     interface Global {
+//       appEnv: any
+//       _$app: any
+//     }
+//   }
+// }
+
 global.appEnv = env
 const {
   /* Paths */

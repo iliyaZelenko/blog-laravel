@@ -30,6 +30,7 @@
         <v-btn
           color="orange"
           text
+          @click="goToPost"
         >
           {{ $t('posts_page_read_more_btn') }}
         </v-btn>
@@ -42,10 +43,27 @@
 import Vue from 'vue'
 import Component from 'nuxt-class-component'
 import { Prop } from 'vue-property-decorator'
+import { Inject } from 'vue-inversify-decorator'
+import { TYPES } from '~/configs/dependencyInjection/types'
+import { PathGeneratorInterface } from '~/configs/dependencyInjection/interfaces'
+import { PostInterface } from '~/apollo/schema/posts'
 
 @Component
 export default class Post extends Vue {
-  @Prop() post!: {}
-  // @Prop({}) post!: {}
+  @Prop() post!: PostInterface
+
+  @Inject(TYPES.PathGeneratorInterface) private pathGenerator!: PathGeneratorInterface
+
+  goToPost () {
+    this.$router.push(
+      this.pathGenerator.generate({
+        name: 'post',
+        params: {
+          id: this.post.id.toString(),
+          slug: this.post.titleSlug
+        }
+      })
+    )
+  }
 }
 </script>

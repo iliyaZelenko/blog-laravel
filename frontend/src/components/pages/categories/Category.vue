@@ -30,6 +30,8 @@
         <v-card-text>
           Личных постов: {{ category.postsCount }}.
           Всего постов: {{ category.allPostsCount }}.
+          Личных вложенных категорий: {{ category.childrenCount }}.
+          Всего вложенных категорий: {{ category.allChildrenCount }}.
         </v-card-text>
 
         <v-card-actions>

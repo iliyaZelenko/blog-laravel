@@ -28,9 +28,11 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import Component from 'nuxt-class-component'
+import { Provide as ProvideServiceContainerForInversify } from 'vue-inversify-decorator'
+import Component from '~/plugins/nuxt-class-component'
 import TheToolbar from '~/components/layouts/main/TheToolbar.vue'
 import TheNavigationDrawer from '~/components/layouts/main/TheNavigationDrawer.vue'
+import { serviceContainer } from '~/configs/dependencyInjection/container'
 
 @Component({
   name: 'MainLayout',
@@ -38,6 +40,7 @@ import TheNavigationDrawer from '~/components/layouts/main/TheNavigationDrawer.v
     TheToolbar, TheNavigationDrawer
   }
 })
+@ProvideServiceContainerForInversify(serviceContainer)
 export default class MainLayout extends Vue {
   navigationDrawer = false
 

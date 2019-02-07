@@ -39,25 +39,38 @@
   </div>
 </template>
 
-<script>
-export default {
-  props: {
-    error: {
-      type: Object,
-      required: true
-    }
-  },
+<script lang="ts">
+import Vue from 'vue'
+import { Provide as ProvideServiceContainerForInversify } from 'vue-inversify-decorator'
+import { Prop } from 'vue-property-decorator'
+import Component from '~/plugins/nuxt-class-component'
+import TheToolbar from '~/components/layouts/main/TheToolbar.vue'
+import TheNavigationDrawer from '~/components/layouts/main/TheNavigationDrawer.vue'
+import { serviceContainer } from '~/configs/dependencyInjection/container'
+
+@Component({
+  name: 'ErrorLayout',
+  components: {
+    TheToolbar, TheNavigationDrawer
+  }
+})
+@ProvideServiceContainerForInversify(serviceContainer)
+export default class ErrorLayout extends Vue {
+  @Prop(Object) error!: any
+
+  /**
+   * Hook ставящий заголовок
+   */
   head () {
     return {
       title: `Ошибка ${this.error.statusCode}`
     }
-  },
-  computed: {
-    text () {
-      // Ниже не подъодит из-за того что message есть всегда, если его не указать, то message: "{↵  "statusCode": 404↵}"
-      // `Произошла ошибка ${this.error.statusCode}${this.error.message ? ': ' + this.error.message : ''}.`
-      return `Произошла ошибка ${this.error.statusCode}: ${this.error.message}.`
-    }
+  }
+
+  get text () {
+    // Ниже не подъодит из-за того что message есть всегда, если его не указать, то message: "{↵  "statusCode": 404↵}"
+    // `Произошла ошибка ${this.error.statusCode}${this.error.message ? ': ' + this.error.message : ''}.`
+    return `Произошла ошибка ${this.error.statusCode}: ${this.error.message}.`
   }
 }
 </script>

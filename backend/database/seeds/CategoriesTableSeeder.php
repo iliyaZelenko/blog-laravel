@@ -28,7 +28,7 @@ class CategoriesTableSeeder extends Seeder
         }
     }
 
-    protected function createCategories($items, $urlPrefix, $parent = null): void
+    protected function createCategories($items, $urlPrefix, ?Category $parent = null): void
     {
         collect($items)->each(function ($item) use ($urlPrefix, $parent) {
             $fields = array_merge([
@@ -43,7 +43,12 @@ class CategoriesTableSeeder extends Seeder
 
 //            dump('category: ' . $item['name']);
 
-            $category = Category::create($fields);
+//            $category = Category::create($fields);
+            $category = new Category($fields);
+
+            if ($parent) {
+                $parent->saveChildren($category);
+            }
 
             $this->setPath($category, $urlPrefix);
 
