@@ -33,6 +33,7 @@ export default class LocaleSwitcher extends Vue {
   }
 
   get availableLocales () {
+    // @ts-ignore
     return this.$i18n.locales.filter(i => i.code !== this.$i18n.locale)
   }
 }

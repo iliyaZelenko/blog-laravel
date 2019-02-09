@@ -5,10 +5,18 @@ export const GET_POST_QUERY = gql`
     post (id: $id) {
       id
       title
+      titleSlug
       content
       user {
+        id
         nickname
         fullName
+        avatar {
+          sm
+        }
+        createdAt
+        gender
+        age
       }
       category {
         id

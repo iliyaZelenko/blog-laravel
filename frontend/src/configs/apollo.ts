@@ -1,6 +1,7 @@
 const { FULL_API_GRAPHQL_URL } = global.appEnv
 
 export default {
+  tokenName: 'auth__token',
   // optional
   errorHandler (error) {
     console.log('%cError', 'background: red; color: white; padding: 2px 4px; border-radius: 3px; font-weight: bold;', error.message)

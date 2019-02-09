@@ -26,7 +26,7 @@
 
 <script>
 export default {
-  name: 'UserAvatr',
+  name: 'UserAvatar',
   props: {
     size: {
       type: String,
@@ -39,8 +39,7 @@ export default {
   },
   computed: {
     imgSrc () {
-      // TODO edit
-      return this.src || 'http://sharethingz.com/wp-content/uploads/2014/08/avatar-512x350.png?x96597' // this.$auth.user.avatar
+      return this.src || this.$auth.user.avatar
     }
   }
 }

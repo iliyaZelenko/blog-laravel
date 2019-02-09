@@ -7,7 +7,11 @@
         class="mb-4"
       >
         <v-card-title>
-          <avatar />
+          <!--<avatar />-->
+          <user-avatar
+            :user="friend"
+            size="80px"
+          />
 
           <div class="ml-3">
             <b>{{ owner.name }}</b>
@@ -99,11 +103,11 @@
 </template>
 
 <script>
-import Avatar from '~/components/user/Avatar'
+import UserAvatar from '~/components/user/avatar/UserAvatar.vue'
 
 export default {
   name: 'ProfileActivityPosts',
-  components: { Avatar },
+  components: { UserAvatar },
   props: {
     owner: {
       type: Object,

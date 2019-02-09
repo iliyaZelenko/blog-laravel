@@ -213,7 +213,7 @@ export default class TheToolbar extends Vue {
   // data: () => ({
   form = {
     email: 'test@test.com',
-    password: 'password'
+    password: 'secret'
   }
   loading = false
   loadingLogout = false

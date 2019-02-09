@@ -4,58 +4,62 @@
       {{ post.title }}
     </h1>
 
-    <p>
-      <v-layout align-center>
-        <avatar :src="`https://randomuser.me/api/portraits/men/${post.id}.jpg`" />
-
-        <span class="body-2 ml-2">
-          {{ post.user.nickname }}
-        </span>
-
-        <v-icon class="ml-4">
-          category
-        </v-icon>
-
-        <span class="body-2 ml-1 mr-2">
-          Category:
-
-          <nuxt-link
-            :to="categoryPath(post.category)"
-          >
-            <b>
-              {{ post.category.name }}
-            </b>
-          </nuxt-link>
-        </span>
-
-        <v-icon class="ml-4">
-          label
-        </v-icon>
-
-        <span class="body-2 ml-1 mr-2">
-          Tags:
-        </span>
-
-        <v-chip
-          v-for="tag of post.tags"
-          :key="tag.id"
+    <v-layout
+      class="mb-4"
+      align-center
+      wrap
+    >
+      <profile-menu :user="post.user">
+        <v-layout
+          slot="activator"
+          align-center
         >
-          <v-avatar class="teal white--text">
-            {{ tag.name.slice(0, 1).toUpperCase() }}
-          </v-avatar>
+          <!--`https://randomuser.me/api/portraits/men/${post.id}.jpg`-->
+          <user-avatar :user="post.user" />
 
-          <span class="body-1">
-            {{ tag.name }}
+          <span class="body-2 ml-2">
+            {{ post.user.nickname }}
+            <span
+              v-if="post.user.fullName"
+              class="grey--text"
+            >
+              <br>
+              {{ post.user.fullName }}
+            </span>
           </span>
-        </v-chip>
-      </v-layout>
-    </p>
+        </v-layout>
+      </profile-menu>
+
+      <v-icon class="ml-4">
+        category
+      </v-icon>
+
+      <div class="body-2 ml-1 mr-2">
+        Category:
+
+        <nuxt-link
+          :to="categoryPath(post.category)"
+        >
+          <b>
+            {{ post.category.name }}
+          </b>
+        </nuxt-link>
+      </div>
+
+      <v-icon class="ml-4">
+        label
+      </v-icon>
+
+      <span class="body-2 ml-1 mr-2">
+        Tags:
+      </span>
+
+      <tags :post="post" />
+    </v-layout>
 
     <p class="body-1">
       {{ post.content }}
     </p>
-
-    <hr>
 
     <pre>
       {{ post }}
@@ -70,13 +74,17 @@ import { Inject } from 'vue-inversify-decorator'
 import Component from '~/plugins/nuxt-class-component'
 import { TYPES } from '~/configs/dependencyInjection/types'
 import { PathGeneratorInterface, PostRepositoryInterface } from '~/configs/dependencyInjection/interfaces'
-import { serviceContainer } from '~/configs/dependencyInjection/container'
-import { PostInterface } from '~/apollo/schema/posts'
-import Avatar from '~/components/user/Avatar.vue'
 import { CategoryInterface } from '~/apollo/schema/categories'
+import { PostInterface } from '~/apollo/schema/posts'
+import { serviceContainer } from '~/configs/dependencyInjection/container'
+import UserAvatar from '~/components/user/avatar/UserAvatar.vue'
+import Tags from '~/components/pages/posts/post/tags/Tags.vue'
+import ProfileMenu from '~/components/user/ProfileMenu.vue'
+
+const PathGenerator = serviceContainer.get<PathGeneratorInterface>(TYPES.PathGeneratorInterface)
 
 @Component({
-  components: { Avatar }
+  components: { UserAvatar, ProfileMenu, Tags }
 })
 export default class Post extends Vue {
   @Prop(String) id!: string
@@ -99,12 +107,32 @@ export default class Post extends Vue {
     })
   }
 
-  async asyncData ({ app, redirect, error, params: { id } }) {
+  async asyncData ({ app, redirect, error, params: { id, slug } }) {
     const PostRepo = serviceContainer.get<PostRepositoryInterface>(TYPES.PostRepositoryInterface)
 
     const post = await PostRepo.getPost(id)
 
+    if (!post) {
+      return error({
+        statusCode: 404,
+        message: 'пост не найден'
+      })
+    }
+    if (post.titleSlug !== slug) {
+      redirect(getPostPath(post))
+    }
+
     return { post }
   }
+}
+
+function getPostPath (post: PostInterface) {
+  return PathGenerator.generate({
+    name: 'post',
+    params: {
+      slug: post.titleSlug,
+      id: post.id.toString()
+    }
+  })
 }
 </script>

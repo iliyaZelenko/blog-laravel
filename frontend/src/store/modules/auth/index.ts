@@ -5,6 +5,9 @@ import { USER, USER_LOGGED_IN, USER_LOGGED_OUT, TOKEN, REFRESH_TOKEN_EXPIRED } f
 import { MutationTree, ActionTree, GetterTree, ActionContext } from 'vuex'
 import { RootState } from '~/store'
 import { setTimeout, clearTimeout } from 'timers'
+import { serviceContainer } from '~/configs/dependencyInjection/container'
+import UserRepositoryInterface from '~/repositories/User/UserRepositoryInterface'
+import { TYPES } from '~/configs/dependencyInjection/types'
 
 export const NAME = 'auth'
 export const namespaced = true
@@ -31,6 +34,9 @@ if (process.browser) {
     // })
   })
 }
+
+const UserRepo = serviceContainer.get<UserRepositoryInterface>(TYPES.UserRepositoryInterface)
+
 // TODO указать точные типы
 export interface State {
   brow: any,
@@ -90,8 +96,14 @@ export const actions: Actions<State, RootState> = {
 
     vp.$notify.success('Registered successfully!')
   },
-  async loggedIn (context, { user, tokenInfo, showMsg = true }) {
-    const { commit } = context
+  // user,
+  async loggedIn (context, { tokenInfo, showMsg = true }) {
+    const { commit, dispatch } = context
+    const token = tokenInfo.accessToken
+
+    await this.$apolloHelpers.onLogin(token)
+
+    const user = await dispatch('getUser')
 
     commit(TOKEN, tokenInfo)
     commit(USER, user)
@@ -101,9 +113,19 @@ export const actions: Actions<State, RootState> = {
       vp.$notify.success('logged in successfully!')
     }
   },
-  async getUser ({ commit }) {
-    const { user } = await vp.$get('auth/user')
+  async getAndSetUser ({ commit, dispatch }) {
+    // const { user } = await vp.$get('auth/user')
+    const user = await dispatch('getUser')
+
     return commit(USER, user)
+  },
+  async getUser () {
+    // const { user } = await vp.$get('auth/user')
+    const user = await UserRepo.getAuthUser()
+
+    console.log(user)
+
+    return user
   },
   async logout (context) {
     const { dispatch, commit } = context

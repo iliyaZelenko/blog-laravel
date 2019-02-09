@@ -44,7 +44,7 @@ class User extends AuthenticatableForUser implements MustVerifyEmail
     /**
      * Какие Accessors при сериализации должны быть выданы
      */
-    protected $appends = ['full_name'];
+    protected $appends = ['fullName'];
 
     /**
      * Accessor для полного имени

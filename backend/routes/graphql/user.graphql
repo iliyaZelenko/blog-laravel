@@ -1,0 +1,28 @@
+type User {
+    id: ID!
+    nickname: String!
+    email: String!
+    firstName: String @rename(attribute: "first_name")
+    lastName: String @rename(attribute: "last_name")
+    fullName: String
+    age: Int
+    avatar: UserAvatar
+    gender: UserGenderStatus
+    birthday: DateTime
+    createdAt: DateTime! @rename(attribute: "created_at")
+    updatedAt: DateTime! @rename(attribute: "updated_at")
+    posts: [Post]! @hasMany(type: "paginator")
+    comments: [Comment]! @hasMany(type: "paginator")
+}
+
+type UserAvatar {
+    lg: String
+    md: String
+    sm: String
+    circle: String
+}
+
+enum UserGenderStatus {
+    MALE @enum(value: true)
+    FEMALE @enum(value: false)
+}

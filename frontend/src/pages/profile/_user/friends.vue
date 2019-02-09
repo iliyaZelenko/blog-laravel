@@ -31,10 +31,15 @@
           xl1
         >
           <router-link to="#">
-            <avatar
-              :src="friend.picture.medium"
+            <!--<avatar-->
+            <!--:src="friend.picture.medium"-->
+            <!--size="80px"-->
+            <!--/>-->
+            <user-avatar
+              :user="friend"
               size="80px"
             />
+
             <!--<img :src="friend.picture" class="profile__friend" width="100%">-->
             <div class="text-xs-center">
               <b>{{ friend.name.first }} {{ friend.name.last }}</b>
@@ -56,10 +61,10 @@
 </template>
 
 <script>
-import Avatar from '~/components/user/Avatar.vue'
+import UserAvatar from '~/components/user/avatar/UserAvatar.vue'
 
 export default {
-  components: { Avatar },
+  components: { UserAvatar },
   props: {
     page: {
       type: [String, Number],
@@ -106,8 +111,14 @@ export default {
     fetchFriends () {
       this.$actionWithLoading(async () => {
         const endpoint = `https://randomuser.me/api/?page=${this.currentPage}&results=${this.perPage}&seed=abc`
+        const result = (await this.$get(endpoint)).results
 
-        this.friends = (await this.$get(endpoint)).results
+        this.friends = result.map(i => ({
+          ...i,
+          avatar: {
+            sm: i.picture.medium
+          }
+        }))
       }, 'loading')
     }
   },

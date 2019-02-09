@@ -1,5 +1,6 @@
 #import ./types.graphql
 #import ./categories.graphql
+#import ./user.graphql
 
 type Query {
     # the current auth user (dont forget to provide auth header)
@@ -36,23 +37,6 @@ type Mutation {
     ): User @delete(model: "User")
 }
 
-type User {
-    id: ID!
-    nickname: String!
-    email: String!
-    password: String!
-    firstName: String @rename(attribute: "first_name")
-    lastName: String @rename(attribute: "last_name")
-    fullName: String @rename(attribute: "full_name")
-    avatar: String
-    gender: UserGenderStatus
-    birthday: DateTime
-    createdAt: DateTime! @rename(attribute: "created_at")
-    updatedAt: DateTime! @rename(attribute: "updated_at")
-    posts: [Post]! @hasMany(type: "paginator")
-    comments: [Comment]! @hasMany(type: "paginator")
-}
-
 type Post {
     id: ID!
     title: String!
@@ -72,7 +56,7 @@ type Comment {
     content: String!
     user: User! @belongsTo
     post: Post! @belongsTo
-    repliedComment: User! @belongsTo
+    repliedComment: Comment! @belongsTo
     repliesComments: [Comment]! @hasMany(type: "paginator")
 }
 
@@ -82,7 +66,3 @@ type Tag {
     about: String!
 }
 
-enum UserGenderStatus {
-    MALE @enum(value: true)
-    FEMALE @enum(value: false)
-}

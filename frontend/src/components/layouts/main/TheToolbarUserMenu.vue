@@ -19,7 +19,8 @@
       >
         {{ $auth.user.name }}
       </span>
-      <avatar />
+
+      <user-avatar />
     </v-btn>
 
     <v-card>
@@ -58,12 +59,12 @@
 import Vue from 'vue'
 import { namespace } from 'vuex-class'
 import Component from '~/plugins/nuxt-class-component'
-import Avatar from '~/components/user/Avatar.vue'
+import UserAvatar from '~/components/user/avatar/UserAvatar.vue'
 
 const authModule = namespace('auth')
 
 @Component({
-  components: { Avatar }
+  components: { UserAvatar }
 })
 export default class TheToolbarUserMenu extends Vue {
   loadingLogout: boolean = false
