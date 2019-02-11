@@ -16,7 +16,7 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import cloud from 'd3-cloud/build/d3.layout.cloud' 
+import cloud from 'd3-cloud/build/d3.layout.cloud'
 import * as d3 from 'd3'
 import Component from '~/plugins/nuxt-class-component'
 
