@@ -1,3 +1,5 @@
+// import { Context, Middleware, Transition, LoadingObject } from './nuxt'
+
 declare module '*.vue' {
   import Vue from 'vue'
   const _default: Vue

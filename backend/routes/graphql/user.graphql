@@ -6,6 +6,7 @@ type User {
     lastName: String @rename(attribute: "last_name")
     fullName: String
     age: Int
+    hasVerifiedEmail: Boolean!
     avatar: UserAvatar
     gender: UserGenderStatus
     birthday: DateTime

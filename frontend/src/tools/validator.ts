@@ -1,5 +1,5 @@
 import { Validator } from 'vee-validate'
-import { vp } from '~/tools/helpers'
+// import { vp } from '~/tools/helpers'
 
 // export const nicknameMaxSymbols = 32
 
@@ -42,10 +42,9 @@ export const showServerError = ({ data }) => {
     message = data.message
   }
 
-  // @ts-ignore
-  if (process.browser) {
-    vp.$notify.error(message)
-  } else {
-    console.error(message)
-  }
+  // if (process.browser) {
+  global._$app.$notify.error(message)
+  // } else {
+  //   console.error(message)
+  // }
 }

@@ -3,7 +3,7 @@
     v-model="menuModel"
     :close-on-content-click="false"
     origin="center center"
-    transition="scale-transition"
+    transition="slide-x-transition"
     open-on-hover
     offset-y
   >
@@ -12,13 +12,17 @@
     </div>
 
     <v-card>
-      <v-list>
+      <v-list style="padding: 14px 6px;">
         <v-list-tile avatar>
           <v-list-tile-avatar>
-            <user-avatar :user="user" />
+            <user-avatar
+              :user="user"
+              size-type="md"
+              el-size="66px"
+            />
           </v-list-tile-avatar>
 
-          <v-list-tile-content>
+          <v-list-tile-content class="ml-2">
             <v-list-tile-title>
               {{ user.nickname }}
             </v-list-tile-title>

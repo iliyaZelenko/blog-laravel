@@ -2,10 +2,11 @@ import { join } from 'path'
 const { PLUGINS_DIR } = global.appEnv
 
 export default processPlugins([
-  {
-    src: 'notifications',
-    ssr: false
-  },
+  // {
+  //   src: 'notifications',
+  //   ssr: false
+  // },
+  'notifications',
   'date',
   'serviceContainer',
   'inject',

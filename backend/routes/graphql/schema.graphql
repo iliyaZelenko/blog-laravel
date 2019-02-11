@@ -3,6 +3,7 @@
 #import ./user.graphql
 
 type Query {
+    ## Users ##
     # the current auth user (dont forget to provide auth header)
     me: User @auth
     users: [User!]! @paginate(type: "paginator" model: "User")

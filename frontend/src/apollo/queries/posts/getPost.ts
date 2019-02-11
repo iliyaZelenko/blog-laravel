@@ -13,6 +13,7 @@ export const GET_POST_QUERY = gql`
         fullName
         avatar {
           sm
+          md
         }
         createdAt
         gender

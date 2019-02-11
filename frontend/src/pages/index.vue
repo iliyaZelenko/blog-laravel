@@ -1,5 +1,13 @@
 <template>
   <div class="w-100 h-100">
+    <h2>
+      Облако тегов
+    </h2>
+
+    <no-ssr>
+      <tags-cloud />
+    </no-ssr>
+
     <h1 class="mt-5">
       Все посты
     </h1>
@@ -32,30 +40,29 @@ import Vue from 'vue'
 import { Watch } from 'vue-property-decorator'
 import Component from '~/plugins/nuxt-class-component'
 import PostsList from '~/components/pages/posts/PostsList'
-import { GET_ALL_POSTS_QUERY } from '~/apollo/queries/posts/getAllPosts'
+import { serviceContainer } from '~/configs/dependencyInjection/container'
+import { PostRepositoryInterface } from '~/configs/dependencyInjection/interfaces'
+import { TYPES } from '~/configs/dependencyInjection/types'
+import { PostsInterface } from '~/apollo/schema/posts'
+import TagsCloud from '~/components/tags/TagsCloud.vue'
+
+const PostRepo = serviceContainer.get<PostRepositoryInterface>(TYPES.PostRepositoryInterface)
 
 @Component({
-  components: { PostsList }
+  components: { PostsList, TagsCloud }
 })
 export default class Posts extends Vue {
-  async asyncData ({ app }) {
-    const page = 1 // +page
+  async asyncData () {
+    const page = 1
+    const posts = await PostRepo.getAll()
 
-    const posts = await getByPage(page, app)
-
-    // try {
     return {
       posts,
       page
     }
-    // } catch (e) {
-    //   if (e.response && e.response.status === 404) {
-    //     error({ statusCode: 404, message: app.i18n.t('posts_page_error_404') })
-    //   }
-    // }
   }
 
-  public posts: any[] = []
+  public posts!: PostsInterface
   public loading: boolean = false
   public page: number | null = null
 
@@ -70,31 +77,31 @@ export default class Posts extends Vue {
 
     // TODO ActionWithLoading
     this.loading = true
-    this.posts = await getByPage(page, this)
+    this.posts = await PostRepo.getAll(page)
     this.loading = false
   }
 }
 
-async function getByPage (page: number = 1, context = this) {
-  /*
-  {
-    data: posts,
-      paginatorInfo: {
-        lastPage: pages
-      }
-  } */
-  const {
-    data: {
-      allPosts: posts
-    }
-  } = await context.$apollo.query({
-    query: GET_ALL_POSTS_QUERY,
-    variables: {
-      page,
-      perPage: 8
-    }
-  })
-
-  return posts
-}
+// async function getByPage (page: number = 1, context = this) {
+//   /*
+//   {
+//     data: posts,
+//       paginatorInfo: {
+//         lastPage: pages
+//       }
+//   } */
+//   const {
+//     data: {
+//       allPosts: posts
+//     }
+//   } = await context.$apollo.query({
+//     query: GET_ALL_POSTS_QUERY,
+//     variables: {
+//       page,
+//       perPage: 8
+//     }
+//   })
+//
+//   return posts
+// }
 </script>

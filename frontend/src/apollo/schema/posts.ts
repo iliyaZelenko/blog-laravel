@@ -17,6 +17,7 @@ export interface PostInterface {
   titleSlug: string
   contentShort: string
   user: {
+    id: number
     nickname: string
     fullName: string
   }

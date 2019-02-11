@@ -1,5 +1,5 @@
 // 1. Make sure to import 'vue' before declaring augmented types
-import Vue from 'vue'
+import Vue, { ComponentOptions } from 'vue'
 import { NuxtCookies } from 'cookie-universal-nuxt'
 import VueRouter, { RawLocation } from 'vue-router'
 // import 'vue-i18n'
@@ -10,6 +10,7 @@ import VueI18n, { IVueI18n } from 'vue-i18n'
 import { ApolloProperty } from 'vue-apollo/types/vue-apollo'
 import { ApolloClient } from 'apollo-client'
 // import { VuetifyObject } 'vuetify'
+// import './nuxt'
 
 declare global {
   namespace NodeJS {
@@ -133,5 +134,14 @@ declare module 'vue/types/vue' {
     $actionWithLoading (action: string, loadingVariable: string, ...arg: any)
     // locale
     readonly $i18n: VueI18n & IVueI18n
+  }
+}
+
+declare module 'vue/types/options' {
+  interface ComponentOptions<V extends Vue> {
+    // for my globalRouteMeta middleware
+    meta?: {
+      [key: string]: any
+    }
   }
 }

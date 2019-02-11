@@ -12,7 +12,7 @@ class PostsTableSeeder extends Seeder
      */
     public function run(): void
     {
-        $count = 5;
+        $count = 15;
 
         factory(Post::class, $count)->create()->each(function (\App\Models\Post $post) {
             $tagsCount = random_int(3, 8);
@@ -21,7 +21,7 @@ class PostsTableSeeder extends Seeder
                 ->pluck('id')
                 ->all();
 
-            $post->tags()->sync($tagsId);
+            $post->setTags($tagsId);
         });
     }
 }

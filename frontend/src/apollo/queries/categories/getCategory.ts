@@ -1,8 +1,8 @@
 import gql from 'graphql-tag'
 
 export const GET_CATEGORY_QUERY = gql`
-  query GetCategoryQuery($id: ID!, $page: Int = 1, $perPage: Int = 4) {
-    category(id: $id) {
+  query GetCategoryQuery ($id: ID!, $page: Int = 1, $perPage: Int = 4) {
+    category (id: $id) {
       id
       name
       description
@@ -22,7 +22,7 @@ export const GET_CATEGORY_QUERY = gql`
         childrenCount
         allChildrenCount
       }
-      posts(count: $perPage, page: $page) {
+      posts (count: $perPage, page: $page) {
         data {
           id
           title

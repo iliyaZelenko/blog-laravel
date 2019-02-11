@@ -4,7 +4,11 @@ export default {
   tokenName: 'auth__token',
   // optional
   errorHandler (error) {
-    console.log('%cError', 'background: red; color: white; padding: 2px 4px; border-radius: 3px; font-weight: bold;', error.message)
+    global._$app.$notify.info('Error.', error.message, {
+      timeout: 20000
+    })
+
+    // console.log('%cError', 'background: red; color: white; padding: 2px 4px; border-radius: 3px; font-weight: bold;', error.message)
   },
   // required
   clientConfigs: {

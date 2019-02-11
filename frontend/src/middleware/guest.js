@@ -1,6 +1,6 @@
 // import { store } from '@/store'
 // import { vp } from '@/tools/helpers'
-import { showErrorUniversal } from '~/tools/helpers'
+// import { showErrorUniversal } from '~/tools/helpers'
 
 /**
  * If the user is already authenticated he shouldn't be able to visit
@@ -22,7 +22,7 @@ export default function (context) {
     }
 
     if (redirectTo !== undefined) {
-      showErrorUniversal('This page is for guests only!', context)
+      global._$app.$notify.error('This page is for guests only!')
 
       redirect(redirectTo)
     }

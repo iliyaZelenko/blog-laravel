@@ -4,13 +4,15 @@ import { State, Getter, Action, Mutation, namespace } from 'vuex-class'
 Component.registerHooks([
   // Vue Apollo
   'apollo',
-  // Nuxt
+  // vue-router
   'beforeRouteEnter',
   'beforeRouteLeave',
+  'beforeRouteUpdate', // for vue-router 2.2+
+  // Nuxt
   'asyncData',
   'fetch',
   'head',
-  'middleware',
+  // 'middleware',
   'layout',
   'transition',
   'scrollToTop',

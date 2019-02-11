@@ -13,8 +13,8 @@
         <v-layout
           slot="activator"
           align-center
+          @click="onUserClick"
         >
-          <!--`https://randomuser.me/api/portraits/men/${post.id}.jpg`-->
           <user-avatar :user="post.user" />
 
           <span class="body-2 ml-2">
@@ -84,7 +84,8 @@ import ProfileMenu from '~/components/user/ProfileMenu.vue'
 const PathGenerator = serviceContainer.get<PathGeneratorInterface>(TYPES.PathGeneratorInterface)
 
 @Component({
-  components: { UserAvatar, ProfileMenu, Tags }
+  components: { UserAvatar, ProfileMenu, Tags },
+  scrollToTop: true
 })
 export default class Post extends Vue {
   @Prop(String) id!: string
@@ -95,17 +96,6 @@ export default class Post extends Vue {
   // @Inject(TYPES.PostRepositoryInterface) private postRepo!: PostRepositoryInterface
 
   public post!: PostInterface
-
-  categoryPath (category: CategoryInterface) {
-    return this.pathGenerator.generate({
-      name: 'category-with-path',
-      params: {
-        id: category.id.toString(),
-        path: category.path.slice(1),
-        page: '1'
-      }
-    })
-  }
 
   async asyncData ({ app, redirect, error, params: { id, slug } }) {
     const PostRepo = serviceContainer.get<PostRepositoryInterface>(TYPES.PostRepositoryInterface)
@@ -123,6 +113,28 @@ export default class Post extends Vue {
     }
 
     return { post }
+  }
+
+  onUserClick () {
+    this.$router.push(
+      this.pathGenerator.generate({
+        name: 'profile-user',
+        params: {
+          user: this.post.user.id.toString()
+        }
+      })
+    )
+  }
+
+  categoryPath (category: CategoryInterface) {
+    return this.pathGenerator.generate({
+      name: 'category-with-path',
+      params: {
+        id: category.id.toString(),
+        path: category.path.slice(1),
+        page: '1'
+      }
+    })
   }
 }
 

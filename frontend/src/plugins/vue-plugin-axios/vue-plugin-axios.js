@@ -30,7 +30,7 @@ export default ({ store, app }, inject) => {
         if (response) { // backend error
           showServerError(response)
         } else if (message) { // network error
-          app.$notify.error(message) // TODO было vp
+          app.$notify.error(message)
         }
 
         // this creates an additional exception that is not needed

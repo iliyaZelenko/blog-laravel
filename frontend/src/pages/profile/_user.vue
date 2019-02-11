@@ -19,7 +19,10 @@
         xl2
       >
         <!--left sidebar 300px; -->
-        <left-sidebar style="max-width: 100%;" />
+        <left-sidebar
+          :owner="owner"
+          style="max-width: 100%;"
+        />
       </v-flex>
       <!--right sidebar-->
       <v-flex
@@ -40,10 +43,10 @@
               slider-color="green"
               centered
             >
-              <v-tab :to="{ name: 'profile-user', params: { user: $auth.user.id } }">
+              <v-tab :to="{ name: 'profile-user', params: { user: owner.id } }">
                 Main info
               </v-tab>
-              <v-tab :to="{ name: 'profile-user-friends', params: { user: $auth.user.id } }">
+              <v-tab :to="{ name: 'profile-user-friends', params: { user: owner.id } }">
                 Friends
               </v-tab>
             </v-tabs>
@@ -67,16 +70,31 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
+import Vue from 'vue'
+import Component from '~/plugins/nuxt-class-component'
+import { TYPES } from '~/configs/dependencyInjection/types'
+import { serviceContainer } from '~/configs/dependencyInjection/container'
 import LeftSidebar from '~/components/pages/profile/LeftSidebar.vue'
+import { UserRepositoryInterface } from '~/configs/dependencyInjection/interfaces'
+import { UserInterface } from '~/apollo/schema/users'
 
-export default {
-  name: 'Profile',
-  middleware: 'auth',
+const UserRepo = serviceContainer.get<UserRepositoryInterface>(TYPES.UserRepositoryInterface)
+
+@Component({
+  // name: 'Profile',
+  components: { LeftSidebar },
   meta: {
     auth: true
   },
-  components: { LeftSidebar },
+  middleware: 'auth'
+})
+export default class Profile extends Vue {
+  // name: 'Profile',
+  // middleware = 'auth'
+  // meta: {
+  //   auth: true
+  // }
   // props: {
   //   user: {
   //     type: String | Number,
@@ -86,22 +104,30 @@ export default {
   // validate ({ params }) {
   //   return params.user instanceof String || params.user instanceof Number
   // },
-  // TODO взять и context error и сделать error({ statusCode: 404, message: 'Пользователь не найден' })
-  async asyncData ({ app, route }) {
+
+  public owner: UserInterface | null = null
+
+  async asyncData ({ app, params: { user }, error }) {
     let owner
 
-    if (app.$auth.loggedIn && +route.params.user === app.$auth.user.id) {
-      owner = app.$auth.user
+    if (app.$auth.loggedIn && user === app.$auth.user.id) {
+      // owner = app.$auth.user
+      owner = await UserRepo.getAuthUserProfile()
     } else {
-      owner = await app.$get('profile/other/get-user', {
-        params: { id: route.params.user }
-      })
+      // owner = await app.$get('profile/other/get-user', {
+      //   params: { id: route.params.user }
+      // })
+      owner = await UserRepo.getUserProfile(user)
+
+      if (!owner) {
+        return error({
+          statusCode: 404,
+          message: 'пользователь не найден'
+        })
+      }
     }
 
     return { owner }
-  },
-  data: () => ({
-    owner: null
-  })
+  }
 }
 </script>

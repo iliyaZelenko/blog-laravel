@@ -37,13 +37,9 @@ class CategoriesTableSeeder extends Seeder
                     'name_slug' => str_slug($item['name']),
                     'path' => '' // дальше поставится
                 ],
-                // , '_kim_records'
                 array_except($item, ['_children', '_posts'])
             );
 
-//            dump('category: ' . $item['name']);
-
-//            $category = Category::create($fields);
             $category = new Category($fields);
 
             if ($parent) {
@@ -52,10 +48,9 @@ class CategoriesTableSeeder extends Seeder
 
             $this->setPath($category, $urlPrefix);
 
-            if (isset($item['_posts'])) {
-                $this->createPosts($category, $item['_posts']);
-            }
-
+//            if (isset($item['_posts'])) {
+//                $this->createPosts($category, $item['_posts']);
+//            }
 //            if (isset($item['_kim_records'])) {
 //                $this->createKIMRecords($category, $item['_kim_records']);
 //            }
@@ -69,34 +64,37 @@ class CategoriesTableSeeder extends Seeder
         });
     }
 
-    protected function setPath($model, $urlPrefix): void
+    protected function setPath(Category $model, $urlPrefix): void
     {
         if (is_null($model->parent_id)) {
             $pathAttribute = $model->name_slug;
         } else {
             // getAncestorsAndSelf возращает коллекцию, ancestorsAndSelf возвращал бы экземпляр Illuminate\Database\Eloquent\Builder
-            $pathAttribute = $model->getAncestorsAndSelf()->pluck('name_slug')->implode('/');
+            $pathAttribute = $model
+                ->getAncestorsAndSelf()
+                ->pluck('name_slug')
+                ->implode('/');
         }
 
         $model->path = $urlPrefix . $pathAttribute;
         $model->save();
     }
 
-    protected function createPosts(Category $category, $arr): void
-    {
-        foreach ($arr as $item) {
-            $post = factory(Post::class)->make($item); // new Post($item);
-            $category->savePost($post);
-
-            $tagsCount = random_int(3, 8);
-            $tagsId = \App\Models\Tag::inRandomOrder()
-                ->take($tagsCount)
-                ->pluck('id')
-                ->all();
-
-            $post->tags()->sync($tagsId);
-        }
-    }
+//    protected function createPosts(Category $category, $arr): void
+//    {
+//        foreach ($arr as $item) {
+//            $post = factory(Post::class)->make($item); // new Post($item);
+//            $category->savePost($post);
+//
+//            $tagsCount = random_int(3, 8);
+//            $tagsId = \App\Models\Tag::inRandomOrder()
+//                ->take($tagsCount)
+//                ->pluck('id')
+//                ->all();
+//
+//            $post->tags()->sync($tagsId);
+//        }
+//    }
 
 //    protected function createKIMRecords($category, $arr)
 //    {

@@ -7,9 +7,8 @@
         class="mb-4"
       >
         <v-card-title>
-          <!--<avatar />-->
           <user-avatar
-            :user="friend"
+            :user="owner"
             size="80px"
           />
 

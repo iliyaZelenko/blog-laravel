@@ -19,6 +19,7 @@ class CreateTagsTable extends Migration
             $table->string('name');
             $table->string('name_slug');
             $table->text('about');
+            $table->integer('posts_count')->default(0);
             $table->timestamps();
 
             $table

@@ -17,7 +17,7 @@
         class="pr-3"
         style="text-transform: none !important;"
       >
-        {{ $auth.user.name }}
+        {{ $auth.user.nickname }}
       </span>
 
       <user-avatar />

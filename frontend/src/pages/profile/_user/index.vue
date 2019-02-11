@@ -4,17 +4,19 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
+import Vue from 'vue'
+import { Prop } from 'vue-property-decorator'
+import Component from '~/plugins/nuxt-class-component'
 import Posts from '~/components/pages/profile/ActivityPosts.vue'
+import { UserInterface } from '~/apollo/schema/users'
 
-export default {
-  name: 'ProfileActivity',
+@Component({
+  name: 'ProfileHome',
   components: { Posts },
-  props: {
-    owner: {
-      type: Object,
-      required: true
-    }
-  }
+  scrollToTop: true
+})
+export default class ProfileHome extends Vue {
+  @Prop(Object) owner!: UserInterface
 }
 </script>

@@ -12,7 +12,7 @@ class CommentsTableSeeder extends Seeder
      */
     public function run()
     {
-        $count = 20;
+        $count = 35;
         $savedCount = \App\Models\Comment::count();
         $createCommentsCounts = $count - $savedCount;
         $createCommentsForFoundPost = 3;

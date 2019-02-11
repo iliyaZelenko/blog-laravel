@@ -65,6 +65,13 @@ class User extends AuthenticatableForUser implements MustVerifyEmail
     }
 
     /**
+     * Accessor для hasVerifiedEmail.
+     */
+    public function getHasVerifiedEmailAttribute() {
+        return true;
+    }
+
+    /**
      * By nickname
      *
      * @param $query

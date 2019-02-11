@@ -1,4 +1,4 @@
-import { vp } from '~/tools/helpers'
+// import { vp } from '~/tools/helpers'
 // import { process, window } from '~/types/types'
 import { USER, USER_LOGGED_IN, USER_LOGGED_OUT, TOKEN, REFRESH_TOKEN_EXPIRED } from './mutationsTypes'
 // было просто vuex
@@ -8,6 +8,10 @@ import { setTimeout, clearTimeout } from 'timers'
 import { serviceContainer } from '~/configs/dependencyInjection/container'
 import UserRepositoryInterface from '~/repositories/User/UserRepositoryInterface'
 import { TYPES } from '~/configs/dependencyInjection/types'
+import { ObservableInterface } from '~/configs/dependencyInjection/interfaces'
+import LoggedInBeforeEvent from '~/events/LoggedInBeforeEvent'
+import SignInEvent from '~/events/SignInEvent'
+import LogoutEvent from '~/events/LogoutEvent'
 
 export const NAME = 'auth'
 export const namespaced = true
@@ -36,6 +40,7 @@ if (process.browser) {
 }
 
 const UserRepo = serviceContainer.get<UserRepositoryInterface>(TYPES.UserRepositoryInterface)
+const Observable = serviceContainer.get<ObservableInterface>(TYPES.ObservableInterface)
 
 // TODO указать точные типы
 export interface State {
@@ -84,24 +89,30 @@ export const actions: Actions<State, RootState> = {
     commit(USER, user)
   },
   async signin ({ dispatch }, form) {
-    const loggedInData = await vp.$post('auth/signin', form)
+    const loggedInData = await global._$app.$post('auth/signin', form)
+    const loggedInResult = await dispatch('loggedIn', loggedInData)
 
-    await dispatch('loggedIn', loggedInData)
+    await Observable.emit<SignInEvent>(
+      SignInEvent.NAME,
+      new SignInEvent(loggedInResult)
+    )
   },
   async signup ({ dispatch }, form) {
-    const loggedInData = await vp.$post('auth/signup', form)
+    const loggedInData = await global._$app.$post('auth/signup', form)
     loggedInData.showMsg = false
 
     await dispatch('loggedIn', loggedInData)
 
-    vp.$notify.success('Registered successfully!')
+    global._$app.$notify.success('Registered successfully!')
   },
   // user,
   async loggedIn (context, { tokenInfo, showMsg = true }) {
     const { commit, dispatch } = context
-    const token = tokenInfo.accessToken
 
-    await this.$apolloHelpers.onLogin(token)
+    await Observable.emit<LoggedInBeforeEvent>(
+      LoggedInBeforeEvent.NAME,
+      new LoggedInBeforeEvent(tokenInfo)
+    )
 
     const user = await dispatch('getUser')
 
@@ -110,17 +121,22 @@ export const actions: Actions<State, RootState> = {
     commit(USER_LOGGED_IN, context)
 
     if (showMsg) {
-      vp.$notify.success('logged in successfully!')
+      global._$app.$notify.success('logged in successfully!')
+    }
+
+    return {
+      tokenInfo,
+      user
     }
   },
   async getAndSetUser ({ commit, dispatch }) {
-    // const { user } = await vp.$get('auth/user')
+    // const { user } = await global._$app.$get('auth/user')
     const user = await dispatch('getUser')
 
     return commit(USER, user)
   },
   async getUser () {
-    // const { user } = await vp.$get('auth/user')
+    // const { user } = await global._$app.$get('auth/user')
     const user = await UserRepo.getAuthUser()
 
     console.log(user)
@@ -130,10 +146,14 @@ export const actions: Actions<State, RootState> = {
   async logout (context) {
     const { dispatch, commit } = context
 
-    await vp.$post('auth/logout')
+    await global._$app.$post('auth/logout')
     await dispatch('setNullTokenAndUser')
     commit(USER_LOGGED_OUT, { context, manually: true })
-    vp.$notify.success('Logged out successfully.')
+
+    await Observable.emit<LogoutEvent>(
+      LogoutEvent.NAME,
+      new LogoutEvent()
+    )
   },
   async refresh (context) {
     const { dispatch, commit, getters } = context
@@ -141,11 +161,14 @@ export const actions: Actions<State, RootState> = {
     console.log('refresh')
     let tokenInfo
     try {
-      tokenInfo = await vp.$post('auth/refresh')
+      tokenInfo = await global._$app.$post('auth/refresh')
     } catch (e) {
-      vp.$notify.info('Token refresh error.', 'Looks like a network error has occurred. Please, refresh the page.', {
-        timeout: 20000
-      })
+      global._$app.$notify.info(
+        'Token refresh error.',
+        'Looks like a network error has occurred. Please, refresh the page.', {
+          timeout: 20000
+        }
+      )
       // if network error, try request again through recursion
       // setTimeout(() => {
       //   dispatch('refresh')
@@ -193,8 +216,6 @@ export const actions: Actions<State, RootState> = {
   // выполняется только на сервере
   async init (context, { app }) {
     const { state, dispatch, getters } = context
-    // console.log('init', this.$router)
-    // console.log('init')
 
     await dispatch('setServerState', { app })
 
@@ -347,7 +368,7 @@ function stopTokenRefresh () {
 }
 
 function showRefreshTokenExpiredMessage () {
-  vp.$notify.info('Please, log in again')
+  global._$app.$notify.info('Please, log in again')
 }
 
 function getUnixTimestamp () {

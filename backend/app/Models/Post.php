@@ -2,10 +2,10 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Collection;
 
 class Post extends BaseModel
 {
@@ -34,8 +34,20 @@ class Post extends BaseModel
         return $this->belongsToMany(Tag::class);
     }
 
-    public function saveComment($comment)
+    public function saveComment(Comment $comment)
     {
         return $this->comments()->save($comment);
+    }
+
+    public function setTags(array $idArr)
+    {
+        /** @var Collection $tags */
+        $tags = Tag::find($idArr);
+
+        $tags->each(function (Tag $tag) {
+            $tag->increment('posts_count');
+        });
+
+        return $this->tags()->sync($idArr);
     }
 }
