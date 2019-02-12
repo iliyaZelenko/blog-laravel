@@ -8,6 +8,9 @@ export const GET_ALL_POSTS_QUERY = gql`
         title
         contentShort
         createdAt
+        ratingValue
+        ratingValuePositive
+        ratingValueNegative
         user {
           id
           avatar {

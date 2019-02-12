@@ -7,6 +7,10 @@ export const GET_ALL_TAGS_QUERY = gql`
       about
       name
       postsCount
+      category {
+        id
+        name
+      }
     }
   }
 `

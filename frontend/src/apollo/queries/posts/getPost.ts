@@ -7,6 +7,9 @@ export const GET_POST_QUERY = gql`
       title
       titleSlug
       content
+      ratingValue
+      ratingValuePositive
+      ratingValueNegative
       user {
         id
         nickname
@@ -32,6 +35,7 @@ export const GET_POST_QUERY = gql`
       comments (page: $commentsPage, count: $commentsPerPage) {
         data {
           content
+          ratingValue
           user {
             id
             nickname

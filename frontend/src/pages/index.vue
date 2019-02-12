@@ -5,54 +5,7 @@
         xs6
         offset-xs6
       >
-        <v-card>
-          <v-card-title>
-            <v-icon
-              large
-              left
-            >
-              label
-            </v-icon>
-            <span class="display-1 font-weight-light">
-              Облако тегов
-            </span>
-
-            <v-spacer />
-
-            <v-btn
-              color="primary"
-              small
-              @click="() => { $refs.tags.generate() }"
-            >
-              <v-icon left>
-                refresh
-              </v-icon>
-
-              Обновить
-            </v-btn>
-          </v-card-title>
-          <v-card-text>
-            <no-ssr>
-              <tags-cloud
-                ref="tags"
-                style="height: 350px;"
-                :tags="tags"
-                @tag-mouseover="tagHoverText = arguments[0].about"
-                @tag-mouseout="tagHoverText = null"
-                @tag-click="onTagCloudTagClick"
-              />
-            </no-ssr>
-
-            <v-scale-transition>
-              <span
-                v-if="tagHoverText"
-                class="grey--text"
-              >
-                {{ tagHoverText }}
-              </span>
-            </v-scale-transition>
-          </v-card-text>
-        </v-card>
+        <tags-cloud :tags="tags" />
       </v-flex>
     </v-layout>
 
@@ -87,7 +40,7 @@
 import Vue from 'vue'
 import { Watch } from 'vue-property-decorator'
 import Component from '~/plugins/nuxt-class-component'
-import PostsList from '~/components/pages/posts/PostsList'
+import PostsList from '~/components/posts/PostsList'
 import { serviceContainer } from '~/configs/dependencyInjection/container'
 import { PostRepositoryInterface, TagRepositoryInterface } from '~/configs/dependencyInjection/interfaces'
 import { TYPES } from '~/configs/dependencyInjection/types'
@@ -117,7 +70,6 @@ export default class Posts extends Vue {
   public tags!: any[]
   public page!: number
   public loading: boolean = false
-  public tagHoverText: string | null = null
 
   @Watch('page')
   async onPageChange (page: number) {
@@ -132,10 +84,6 @@ export default class Posts extends Vue {
     this.loading = true
     this.posts = await PostRepo.getAll(page)
     this.loading = false
-  }
-
-  onTagCloudTagClick (tag) {
-    alert(tag.name)
   }
 }
 

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Resources\Ratingable\Ratingable;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -9,8 +10,11 @@ use Illuminate\Support\Collection;
 
 class Post extends BaseModel
 {
+    use Ratingable;
+
     protected $fillable = [
-        'title', 'title_slug', 'content', 'content_short', 'user_id', 'category_id'
+        'title', 'title_slug', 'content', 'content_short', 'user_id', 'category_id', 'rating_value',
+        'rating_value_positive', 'rating_value_negative'
     ];
 
     public function user(): BelongsTo

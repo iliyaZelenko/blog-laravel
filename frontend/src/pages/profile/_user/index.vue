@@ -8,7 +8,7 @@
 import Vue from 'vue'
 import { Prop } from 'vue-property-decorator'
 import Component from '~/plugins/nuxt-class-component'
-import Posts from '~/components/pages/profile/ActivityPosts.vue'
+import Posts from '~/components/profile/ActivityPosts.vue'
 import { UserInterface } from '~/apollo/schema/users'
 
 @Component({

@@ -46,7 +46,12 @@
         </nuxt-link>
       </div>
 
-      <v-icon class="ml-4">
+      <rating
+        class="mx-4"
+        :info="ratingInfo"
+      />
+
+      <v-icon>
         label
       </v-icon>
 
@@ -78,13 +83,14 @@ import { CategoryInterface } from '~/apollo/schema/categories'
 import { PostInterface } from '~/apollo/schema/posts'
 import { serviceContainer } from '~/configs/dependencyInjection/container'
 import UserAvatar from '~/components/user/avatar/UserAvatar.vue'
-import Tags from '~/components/pages/posts/post/tags/Tags.vue'
+import Tags from '~/components/posts/post/tags/Tags.vue'
 import ProfileMenu from '~/components/user/ProfileMenu.vue'
+import Rating from '~/components/rating/Rating.vue'
 
 const PathGenerator = serviceContainer.get<PathGeneratorInterface>(TYPES.PathGeneratorInterface)
 
 @Component({
-  components: { UserAvatar, ProfileMenu, Tags },
+  components: { UserAvatar, ProfileMenu, Tags, Rating },
   scrollToTop: true
 })
 export default class Post extends Vue {
@@ -113,6 +119,14 @@ export default class Post extends Vue {
     }
 
     return { post }
+  }
+
+  get ratingInfo () {
+    return {
+      value: this.post.ratingValue,
+      positive: this.post.ratingValuePositive,
+      negative: this.post.ratingValueNegative
+    }
   }
 
   onUserClick () {

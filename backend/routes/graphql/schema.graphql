@@ -1,6 +1,7 @@
 #import ./types.graphql
 #import ./categories.graphql
 #import ./user.graphql
+#import ./posts.graphql
 
 type Query {
     ## Users ##
@@ -17,8 +18,8 @@ type Query {
     category(id: ID @eq): Category @find
     rootCategories: [Category!]! @field(resolver: "CategoriesQuery@getRoots")
 
-    ## Categories ##
-    tags: [Tag!]! @all
+    ## Tags ##
+    tags: [Tag!]! @all # (category_id: [Int] @in)
 }
 
 type Mutation {
@@ -41,23 +42,16 @@ type Mutation {
     ): User @delete(model: "User")
 }
 
-type Post {
-    id: ID!
-    title: String!
-    titleSlug: String! @rename(attribute: "title_slug")
-    content: String!
-    contentShort: String! @rename(attribute: "content_short")
-    user: User! @belongsTo
-    category: Category! @belongsTo
-    comments: [Comment]! @hasMany(type: "paginator")
-    tags: [Tag]! @belongsToMany
-    createdAt: DateTime! @rename(attribute: "created_at")
-    updatedAt: DateTime! @rename(attribute: "updated_at")
-}
-
 type Comment {
     id: ID!
+    createdAt: DateTime! @rename(attribute: "created_at")
+    updatedAt: DateTime! @rename(attribute: "updated_at")
     content: String!
+    ratingValue: Int! @rename(attribute: "rating_value")
+    ratingValuePositive: Int! @rename(attribute: "rating_value_positive")
+    ratingValueNegative: Int! @rename(attribute: "rating_value_negative")
+
+    # Relations
     user: User! @belongsTo
     post: Post! @belongsTo
     repliedComment: Comment! @belongsTo
@@ -66,8 +60,18 @@ type Comment {
 
 type Tag {
     id: ID!
+    createdAt: DateTime! @rename(attribute: "created_at")
+    updatedAt: DateTime! @rename(attribute: "updated_at")
     name: String!
     about: String!
     postsCount: Int! @rename(attribute: "posts_count")
+
+    # Relations
+    category: Category! @belongsTo
 }
+
+type RatingInfo {
+    value: Int!
+}
+
 

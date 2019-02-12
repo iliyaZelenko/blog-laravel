@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateContentRatingTable extends Migration
+class CreateContentRatingsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,7 @@ class CreateContentRatingTable extends Migration
      */
     public function up()
     {
-        Schema::create('content_rating', function (Blueprint $table) {
+        Schema::create('content_ratings', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('value');
             $table->integer('user_id')->unsigned();
@@ -34,6 +34,6 @@ class CreateContentRatingTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('content_rating');
+        Schema::dropIfExists('content_ratings');
     }
 }

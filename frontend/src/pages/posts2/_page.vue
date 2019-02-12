@@ -55,7 +55,7 @@
 import Vue from 'vue'
 import { Watch } from 'vue-property-decorator'
 import Component from '~/plugins/nuxt-class-component'
-import Post from '~/components/pages/posts/Post'
+import Post from '~/components/posts/Post'
 import { GET_ALL_POSTS_QUERY } from '~/apollo/queries/posts/getAllPosts'
 
 @Component({

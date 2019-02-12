@@ -17,6 +17,7 @@ class DatabaseSeeder extends Seeder
             ->call(TagsTableSeeder::class)
             ->call(PostsTableSeeder::class)
             ->call(CommentsTableSeeder::class)
+            ->call(ContentRatingTableSeeder::class)
         ;
     }
 }

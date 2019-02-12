@@ -14,7 +14,10 @@
     <v-card>
       <v-list style="padding: 14px 6px;">
         <v-list-tile avatar>
-          <v-list-tile-avatar>
+          <v-list-tile-avatar
+            style="cursor: pointer;"
+            @click="onUserClick"
+          >
             <user-avatar
               :user="user"
               size-type="md"
@@ -22,7 +25,11 @@
             />
           </v-list-tile-avatar>
 
-          <v-list-tile-content class="ml-2">
+          <v-list-tile-content
+            style="cursor: pointer;"
+            class="ml-2"
+            @click="onUserClick"
+          >
             <v-list-tile-title>
               {{ user.nickname }}
             </v-list-tile-title>
@@ -98,9 +105,12 @@
 <script lang="ts">
 import Vue from 'vue'
 import { Prop } from 'vue-property-decorator'
+import { Inject } from 'vue-inversify-decorator'
+import { TYPES } from '~/configs/dependencyInjection/types'
 import Component from '~/plugins/nuxt-class-component'
 import { UserInterface } from '~/apollo/schema/users'
 import UserAvatar from '~/components/user/avatar/UserAvatar.vue'
+import { PathGeneratorInterface } from '~/configs/dependencyInjection/interfaces'
 
 @Component({
   name: 'ProfileMenu',
@@ -109,10 +119,23 @@ import UserAvatar from '~/components/user/avatar/UserAvatar.vue'
 export default class ProfileMenu extends Vue {
   @Prop(Object) user!: UserInterface
 
+  @Inject(TYPES.PathGeneratorInterface) private pathGenerator!: PathGeneratorInterface
+
   public blockModel: boolean = false
   public subscribeModel: boolean = false
   public favoriteModel: boolean = false
 
   public menuModel: boolean = false
+
+  onUserClick () {
+    this.$router.push(
+      this.pathGenerator.generate({
+        name: 'profile-user',
+        params: {
+          user: this.user.id.toString()
+        }
+      })
+    )
+  }
 }
 </script>

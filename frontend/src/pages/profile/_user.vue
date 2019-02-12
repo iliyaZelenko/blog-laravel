@@ -75,7 +75,7 @@ import Vue from 'vue'
 import Component from '~/plugins/nuxt-class-component'
 import { TYPES } from '~/configs/dependencyInjection/types'
 import { serviceContainer } from '~/configs/dependencyInjection/container'
-import LeftSidebar from '~/components/pages/profile/LeftSidebar.vue'
+import LeftSidebar from '~/components/profile/LeftSidebar.vue'
 import { UserRepositoryInterface } from '~/configs/dependencyInjection/interfaces'
 import { UserInterface } from '~/apollo/schema/users'
 
@@ -83,11 +83,11 @@ const UserRepo = serviceContainer.get<UserRepositoryInterface>(TYPES.UserReposit
 
 @Component({
   // name: 'Profile',
-  components: { LeftSidebar },
-  meta: {
-    auth: true
-  },
-  middleware: 'auth'
+  components: { LeftSidebar }
+  // meta: {
+  //   auth: true
+  // },
+  // middleware: 'auth'
 })
 export default class Profile extends Vue {
   // name: 'Profile',

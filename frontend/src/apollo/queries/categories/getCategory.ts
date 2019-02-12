@@ -22,13 +22,24 @@ export const GET_CATEGORY_QUERY = gql`
         childrenCount
         allChildrenCount
       }
+      # этот запрос должен совпадать с тем что в getCategoryPosts!
       posts (count: $perPage, page: $page) {
         data {
           id
           title
           titleSlug
           contentShort
+          createdAt
+          ratingValue
+          ratingValuePositive
+          ratingValueNegative
           user {
+            id
+            avatar {
+              sm
+              md
+            }
+            createdAt
             nickname
             fullName
           }

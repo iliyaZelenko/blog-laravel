@@ -2,21 +2,23 @@
 
 namespace App\Models;
 
+use App\Models\Resources\Ratingable\Ratingable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-//use App\Custom\ModelsTraits\Ratingable;
 
 class Comment extends Model
 {
-//    use Ratingable;
+    use Ratingable;
 
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
-    protected $fillable = ['content', 'user_id', 'post_id', 'comment_id'];
+    protected $fillable = [
+        'content', 'user_id', 'post_id', 'comment_id', 'rating_value', 'rating_value_positive', 'rating_value_negative'
+    ];
 
     public function user(): BelongsTo
     {

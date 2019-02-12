@@ -84,7 +84,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import Component from '~/plugins/nuxt-class-component'
-import Category from '~/components/pages/categories/Category.vue'
+import Category from '~/components/categories/Category.vue'
 
 @Component({
   components: {

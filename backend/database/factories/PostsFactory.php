@@ -17,8 +17,13 @@ use Carbon\Carbon;
 
 $faker = \Faker\Factory::create('en_US');// Faker::create('ru_RU');
 
-$factory->define(App\Models\Post::class, function () use ($faker) {
+$factory->define(\App\Models\Post::class, function () use ($faker) {
     $title = $faker->sentence;
+
+    /** @var \App\Models\User $category */
+    $user = \App\Models\User::inRandomOrder()->first();
+    /** @var \App\Models\Category $category */
+    $category = \App\Models\Category::inRandomOrder()->first();
 
     return [
         'title' => $title,
@@ -27,12 +32,11 @@ $factory->define(App\Models\Post::class, function () use ($faker) {
         },
         'content_short' => $faker->realText,
         'content' => $faker->paragraph, // $faker->realText . $faker->realText,
-        'user_id' => function () {
-            return \App\Models\User::inRandomOrder()->first()->id;
-//            return factory(\App\Models\User::class)->create()->id;
-        },
-        'category_id' => function () {
-            return \App\Models\Category::inRandomOrder()->first()->id;
-        },
+        'user_id' => $user->id,
+        'category_id' => $category->id
     ];
+});
+
+$factory->afterCreating(\App\Models\Post::class, function (\App\Models\Post $post, $faker) {
+    $post->category->savePost($post);
 });

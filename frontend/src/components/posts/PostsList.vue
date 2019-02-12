@@ -56,7 +56,7 @@
 import Vue from 'vue'
 import { Prop } from 'vue-property-decorator'
 import Component from '~/plugins/nuxt-class-component'
-import Post from '~/components/pages/posts/Post'
+import Post from '~/components/posts/Post'
 
 @Component({
   components: {

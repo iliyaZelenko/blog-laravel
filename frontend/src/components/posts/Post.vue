@@ -16,6 +16,10 @@
         <time class="mt-2 grey--text">
           {{ $date(post.createdAt) }}
         </time>
+
+        <v-spacer />
+
+        <rating :info="ratingInfo" />
       </v-card-title>
 
       <v-card-text class="pt-0">
@@ -52,6 +56,7 @@
 
         <v-btn
           color="orange"
+          class="white--text"
           text
           @click="goToPost"
         >
@@ -72,14 +77,23 @@ import { PathGeneratorInterface } from '~/configs/dependencyInjection/interfaces
 import { PostInterface } from '~/apollo/schema/posts'
 import UserAvatar from '~/components/user/avatar/UserAvatar.vue'
 import ProfileMenu from '~/components/user/ProfileMenu.vue'
+import Rating from '~/components/rating/Rating.vue'
 
 @Component({
-  components: { UserAvatar, ProfileMenu }
+  components: { UserAvatar, ProfileMenu, Rating }
 })
 export default class Post extends Vue {
-  @Prop() post!: PostInterface
+  @Prop(Object) post!: PostInterface
 
   @Inject(TYPES.PathGeneratorInterface) private pathGenerator!: PathGeneratorInterface
+
+  get ratingInfo () {
+    return {
+      value: this.post.ratingValue,
+      positive: this.post.ratingValuePositive,
+      negative: this.post.ratingValueNegative
+    }
+  }
 
   goToPost () {
     this.$router.push(

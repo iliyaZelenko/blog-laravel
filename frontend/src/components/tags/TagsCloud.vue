@@ -1,192 +1,163 @@
 <template>
-  <div class="tags-cloud">
-    <div id="tags-cloud__svg-wrapper" />
+  <v-card>
+    <v-card-title>
+      <v-icon
+        large
+        left
+      >
+        label
+      </v-icon>
+      <span class="display-1 font-weight-light">
+        Облако тегов
+      </span>
 
-    <v-progress-circular
-      v-if="loading"
-      color="primary"
-      indeterminate
-    />
+      <v-spacer />
 
-    <!--<canvas-->
-    <!--ref="tagsCanvas"-->
-    <!--width="960"-->
-    <!--height="500"-->
-    <!--style="border:1px solid #000000; width: 960px; height: 500px;"-->
-    <!--/>-->
-  </div>
+      <v-btn
+        color="primary"
+        small
+        @click="regenerate"
+      >
+        <v-icon left>
+          refresh
+        </v-icon>
+
+        Перезагрузить
+      </v-btn>
+    </v-card-title>
+    <v-card-text>
+      <div class="text-xs-center">
+        <v-tooltip
+          top
+          :value="!!tagHoverText"
+        >
+          <span slot="activator">
+            &zwnj;
+          </span>
+          <span>{{ tagHoverText }}</span>
+        </v-tooltip>
+      </div>
+
+      <no-ssr>
+        <tags-cloud-svg
+          ref="tags"
+          style="height: 350px;"
+          :tags="filteredTags"
+          :observer="tagsCloudSVGObserver"
+          @tag-mouseover="tagHoverText = arguments[0].about"
+          @tag-mouseout="tagHoverText = null"
+          @tag-click="onTagCloudTagClick"
+        />
+      </no-ssr>
+
+      <!--
+      <v-expand-transition>
+        <div
+          v-if="tagHoverText"
+          class="grey--text"
+        >
+          {{ tagHoverText }}
+        </div>
+      </v-expand-transition>
+      -->
+
+      <v-btn
+        color="primary"
+        @click="showFilters = !showFilters"
+      >
+        <v-icon left>
+          filter_list
+        </v-icon>
+
+        {{ showFilters ? 'Hide filters' : 'Show filters' }}
+      </v-btn>
+
+      <v-expand-transition>
+        <div
+          v-if="showFilters"
+          style="display: flex;"
+          class="align-center"
+        >
+          <v-combobox
+            v-model="selectedCategories"
+            :items="tagsCategories"
+            item-text="name"
+            label="Фильтр по категориям"
+            multiple
+            chips
+            @change="regenerate"
+          />
+
+          <v-btn
+            color="primary"
+            @click="selectedCategories = tagsCategories"
+          >
+            Выбрать все
+          </v-btn>
+        </div>
+      </v-expand-transition>
+    </v-card-text>
+  </v-card>
 </template>
 
 <script lang="ts">
 import Vue from 'vue'
-import cloud from 'd3-cloud/build/d3.layout.cloud'
-import * as d3 from 'd3'
 import { Prop } from 'vue-property-decorator'
 import Component from '~/plugins/nuxt-class-component'
+import TagsCloudSVG from '~/components/tags/TagsCloudSVG.vue'
 
-@Component
+@Component({
+  components: { 'tags-cloud-svg': TagsCloudSVG }
+})
 export default class TagsCloud extends Vue {
   @Prop(Array) tags!: any[]
 
-  public loading: boolean = false
+  public tagHoverText: string | null = null
+  public selectedCategories: any[] = []
+  public tagsCloudSVGObserver = new Vue()
+  public showFilters: boolean = false
 
-  get width () {
-    return this.$el.clientWidth
-  }
-
-  get height () {
-    return this.$el.clientHeight
-  }
-
-  get tagsData () {
-    // const data = ['Hello', 'world', 'normally', 'you', 'want', 'more', 'words', 'than', 'this', 'qualify',
-    //   'mix', 'timetable', 'amber', 'lonely', 'continental', 'merit', 'gas', 'sympathetic', 'extreme', 'latest',
-    //   'major', 'cucumber', 'draft', 'Venus', 'conception', 'shatter', 'decade',
-    //   'wood', 'constitution', 'fresh', 'watch', 'accountant', 'integrated', 'mountain', 'prevalence', 'choose',
-    //   'white', 'news', 'apology', 'overlook', 'plug', 'quit'
-    // ]
-    let data: any[] = this.tags
-      .map(i => ({
-        ...i,
-        text: i.name,
-        size: i.postsCount * 1.5
-      }))
-
-    const minFontSize = 25
-    const maxFontSize = 76
-    const wordsMaxFontSize = Math.max(...data.map(i => i.size))
-    const sizeOffset = maxFontSize / wordsMaxFontSize
-
-    return data.map(i => ({
-      ...i,
-      size: Math.max(
-        minFontSize,
-        Math.min(i.size * sizeOffset, maxFontSize)
-      )
-    }))
-  }
-
-  mounted () {
-    this.generate()
-    // determines wheter to show or hide the elements in svg
-    // function toogleFade (show, d) {
-    //   let element = d3.select(this)
-    //   let svg = d3.select('#svg-node')
-    //   let time1 = 700
-    //   let time2 = 1000
-    //   show = !!show
-    //   element.attr({ 'class': show ? 'current' : null, 'data-role': 'animation' })
-    //     .transition()
-    //     .duration(time1)
-    //     .attr('transform', 'translate(' + [d.x, d.y] + ')rotate(' + (show ? 0 : d.rotate) + ')scale(' + (+!show || 3) + ')')
-    //     .each('end', function () {
-    //       show && setTimeout(function () {
-    //         // alert('tag: ' + d.text)
-    //       }, time2 - time1)
-    //     })
-    //   svg.selectAll("text:not([data-role='animation'])")
-    //     .transition()
-    //     .duration(time2)
-    //     .style('opacity', +!show)
-    //     .style('visibility', show ? 'hidden' : 'visible')
-    //     .each('end', function () { element.attr('data-role', null) })
-    // }// end toogleFade
-
-    // cloud().size([960, 500])
-    //   // .canvas(function () { return new Canvas(1, 1) })
-    //   .canvas(this.$refs.tagsCanvas)
-    //   .words(words)
-    //   .padding(5)
-    //   .rotate(function () { return ~~(Math.random() * 2) * 90 })
-    //   // .font('Impact')
-    //   .fontSize(function (d) { return d.size })
-    //   .on('end', end)
-    //   .start()
+  get tagsCategories () { // tags
+    // const result: any[] = []
     //
-    // function end (words) {
-    //   // console.log(JSON.stringify(words))
-    // }
+    // this.tags.map(i => i.category).forEach(i => {
+    //   if (result.some(ri => i.id === ri.id)) return
+    //
+    //   result.push(i)
+    // })
+    //
+    // return result
+
+    // [...new Set(this.tags.map(i => i.category))]
+    return this.tags.map(i => i.category).filter((i, index, arr) => arr.indexOf(i) === index)
   }
 
-  generate () {
-    const wrapper = document.querySelector('#tags-cloud__svg-wrapper')
-
-    this.loading = true
-
-    // remove content
-    if (wrapper) wrapper.innerHTML = ''
-
-    cloud()
-      .size([
-        this.width,
-        this.height
-      ])
-      .words(this.tagsData)
-      .spiral('rectangular')
-      .padding(2) // 6
-      .rotate(() => (~~(Math.random() * 2) * -30) || 60)
-      // .text(function (d) { return d.text; })
-      .font('Impact')
-      .fontSize(d => d.size)
-      .on('end', this.draw.bind(this))
-      .start()
+  get selectedCategoriesIdArr () {
+    return this.selectedCategories.map(i => i.id)
   }
 
-  draw () {
-    const vueVm = this
-    let fill = d3.scale.category20b()
-    let svg = d3.select('#tags-cloud__svg-wrapper').append('svg').attr({
-      width: this.width,
-      height: this.height,
-      id: 'svg-node'
-    })
+  get filteredTags () {
+    if (!this.selectedCategories.length) return this.tags
 
-    let vis = svg.append('g').attr('transform', 'translate(' + [this.width >> 1, (this.height >> 1) - 10] + ')scale(2)')
-    let text = vis.selectAll('text').data(this.tagsData)
-    text.enter().append('text')
-      .style('font-family', d => d.font)
-      .style('font-size', (d) => d.size + 'px')
-      .style('fill', (d, i) => fill(i))
-      .style({ cursor: 'pointer', opacity: 1e-6 })
-      .attr('text-anchor', 'middle')
-      .attr('transform', d => 'translate(' + [d.x, d.y] + ')rotate(' + d.rotate + ')')
-      .text(d => d.text)
-      .on('mouseover', function (d) {
-        d3.select(this)
-          .transition()
-          .duration(500)
-          .style('opacity', 0.8)
-          .style('font-size', d => d.size + 5 + 'px')
+    return this.tags.filter(i =>
+      this.selectedCategoriesIdArr.includes(i.id)
+    )
+  }
 
-        vueVm.$emit('tag-mouseover', d)
-      })
-      .on('mouseout', function (d) {
-        d3.select(this)
-          .transition()
-          .duration(200)
-          .style('opacity', 1)
-          .style('font-size', d => d.size - 5 + 'px')
+  regenerate () {
+    this.tagsCloudSVGObserver.$emit('regenerate')
 
-        vueVm.$emit('tag-mouseout', d)
-      })
-      .on('click', d => {
-        this.$emit('tag-click', d)
-      })
-      // .on('click', function (d) {
-      //   // [this] is the <text> element of svg
-      //   let show = !this.classList.contains('current')
-      //   toogleFade.apply(this, [show, d])
-      // })
-      .transition()
-      .duration(1000)
-      .style('opacity', 1)
+    // this.$nextTick(() => {
+    //   // странно, но без таймера не работает
+    //   setTimeout(() => {
+    //     // @ts-ignore
+    //     this.$refs.tags.generate()
+    //   }, 500)
+    // })
+  }
 
-    vis.transition()
-      .delay(450)
-      .duration(750)
-      .attr('transform', 'translate(' + [this.width >> 1, (this.height >> 1) + 10] + ')scale(1)')
-
-    this.loading = false
+  onTagCloudTagClick (tag) {
+    alert(tag.name)
   }
 }
 </script>

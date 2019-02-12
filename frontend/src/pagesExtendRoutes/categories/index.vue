@@ -56,8 +56,6 @@
       >
         Категория не содержит постов.
       </v-alert>
-
-      <pre>{{ selectedCategory }}</pre>
     </template>
   </div>
 </template>
@@ -67,10 +65,10 @@ import Vue from 'vue'
 import { Inject } from 'vue-inversify-decorator'
 import { Prop } from 'vue-property-decorator'
 import Component from '~/plugins/nuxt-class-component'
-import CategoriesList from '~/components/pages/categories/CategoriesList'
-import CategoriesBreadcrumbs from '~/components/pages/categories/CategoriesBreadcrumbs'
-import CategoriesToolbar from '~/components/pages/categories/CategoriesToolbar'
-import PostsList from '~/components/pages/posts/PostsList'
+import CategoriesList from '~/components/categories/CategoriesList'
+import CategoriesBreadcrumbs from '~/components/categories/CategoriesBreadcrumbs'
+import CategoriesToolbar from '~/components/categories/CategoriesToolbar'
+import PostsList from '~/components/posts/PostsList'
 import { CategoryInterface } from '~/apollo/schema/categories'
 import { TYPES } from '~/configs/dependencyInjection/types'
 import {

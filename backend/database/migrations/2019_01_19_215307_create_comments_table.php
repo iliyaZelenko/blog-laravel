@@ -19,6 +19,9 @@ class CreateCommentsTable extends Migration
             $table->unsignedInteger('post_id');
             $table->unsignedInteger('comment_id')->nullable();
             $table->text('content');
+            $table->integer('rating_value')->default(0);
+            $table->integer('rating_value_positive')->default(0);
+            $table->integer('rating_value_negative')->default(0);
             $table->timestamps();
 
             $table->foreign('user_id')

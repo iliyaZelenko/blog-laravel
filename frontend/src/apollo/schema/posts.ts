@@ -16,6 +16,9 @@ export interface PostInterface {
   title: string
   titleSlug: string
   contentShort: string
+  ratingValue: number
+  ratingValuePositive: number
+  ratingValueNegative: number
   user: {
     id: number
     nickname: string

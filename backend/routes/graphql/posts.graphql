@@ -1,0 +1,21 @@
+type Post {
+    id: ID!
+    createdAt: DateTime! @rename(attribute: "created_at")
+    updatedAt: DateTime! @rename(attribute: "updated_at")
+    title: String!
+    titleSlug: String! @rename(attribute: "title_slug")
+    content: String!
+    contentShort: String! @rename(attribute: "content_short")
+    ratingValue: Int! @rename(attribute: "rating_value")
+    ratingValuePositive: Int! @rename(attribute: "rating_value_positive")
+    ratingValueNegative: Int! @rename(attribute: "rating_value_negative")
+
+    # Special
+    ratingInfo: RatingInfo! @field(resolver: "App\\Http\\GraphQL\\Types\\PostType@getRatingInfo")
+
+    # Relations
+    user: User! @belongsTo
+    category: Category! @belongsTo
+    comments: [Comment]! @hasMany(type: "paginator")
+    tags: [Tag]! @belongsToMany
+}
