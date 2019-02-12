@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 class Tag extends BaseModel
 {
     protected $fillable = [
-        'name', 'name_slug', 'about', 'category_id'
+        'name', 'name_slug', 'about', 'category_id', 'posts_count'
     ];
 
     public function category(): BelongsTo

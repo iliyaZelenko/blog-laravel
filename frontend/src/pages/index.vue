@@ -1,12 +1,60 @@
 <template>
   <div class="w-100 h-100">
-    <h2>
-      Облако тегов
-    </h2>
+    <v-layout>
+      <v-flex
+        xs6
+        offset-xs6
+      >
+        <v-card>
+          <v-card-title>
+            <v-icon
+              large
+              left
+            >
+              label
+            </v-icon>
+            <span class="display-1 font-weight-light">
+              Облако тегов
+            </span>
 
-    <no-ssr>
-      <tags-cloud />
-    </no-ssr>
+            <v-spacer />
+
+            <v-btn
+              color="primary"
+              small
+              @click="() => { $refs.tags.generate() }"
+            >
+              <v-icon left>
+                refresh
+              </v-icon>
+
+              Обновить
+            </v-btn>
+          </v-card-title>
+          <v-card-text>
+            <no-ssr>
+              <tags-cloud
+                ref="tags"
+                style="height: 350px;"
+                :tags="tags"
+                @tag-mouseover="tagHoverText = arguments[0].about"
+                @tag-mouseout="tagHoverText = null"
+                @tag-click="onTagCloudTagClick"
+              />
+            </no-ssr>
+
+            <v-scale-transition>
+              <span
+                v-if="tagHoverText"
+                class="grey--text"
+              >
+                {{ tagHoverText }}
+              </span>
+            </v-scale-transition>
+          </v-card-text>
+        </v-card>
+      </v-flex>
+    </v-layout>
 
     <h1 class="mt-5">
       Все посты
@@ -41,12 +89,13 @@ import { Watch } from 'vue-property-decorator'
 import Component from '~/plugins/nuxt-class-component'
 import PostsList from '~/components/pages/posts/PostsList'
 import { serviceContainer } from '~/configs/dependencyInjection/container'
-import { PostRepositoryInterface } from '~/configs/dependencyInjection/interfaces'
+import { PostRepositoryInterface, TagRepositoryInterface } from '~/configs/dependencyInjection/interfaces'
 import { TYPES } from '~/configs/dependencyInjection/types'
 import { PostsInterface } from '~/apollo/schema/posts'
 import TagsCloud from '~/components/tags/TagsCloud.vue'
 
 const PostRepo = serviceContainer.get<PostRepositoryInterface>(TYPES.PostRepositoryInterface)
+const TagRepo = serviceContainer.get<TagRepositoryInterface>(TYPES.TagRepositoryInterface)
 
 @Component({
   components: { PostsList, TagsCloud }
@@ -55,16 +104,20 @@ export default class Posts extends Vue {
   async asyncData () {
     const page = 1
     const posts = await PostRepo.getAll()
+    const tags = await TagRepo.getAllTags()
 
     return {
       posts,
+      tags,
       page
     }
   }
 
   public posts!: PostsInterface
+  public tags!: any[]
+  public page!: number
   public loading: boolean = false
-  public page: number | null = null
+  public tagHoverText: string | null = null
 
   @Watch('page')
   async onPageChange (page: number) {
@@ -79,6 +132,10 @@ export default class Posts extends Vue {
     this.loading = true
     this.posts = await PostRepo.getAll(page)
     this.loading = false
+  }
+
+  onTagCloudTagClick (tag) {
+    alert(tag.name)
   }
 }
 

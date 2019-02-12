@@ -16,6 +16,9 @@ type Query {
     ## Categories ##
     category(id: ID @eq): Category @find
     rootCategories: [Category!]! @field(resolver: "CategoriesQuery@getRoots")
+
+    ## Categories ##
+    tags: [Tag!]! @all
 }
 
 type Mutation {
@@ -65,5 +68,6 @@ type Tag {
     id: ID!
     name: String!
     about: String!
+    postsCount: Int! @rename(attribute: "posts_count")
 }
 
