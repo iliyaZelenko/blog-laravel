@@ -6,8 +6,10 @@ import {
   CategoryRepositoryInterface,
   PostRepositoryInterface,
   UserRepositoryInterface,
+  TagRepositoryInterface,
+  CommentRepositoryInterface,
   ObservableInterface,
-  TagRepositoryInterface
+  ScrollInterface
 } from './interfaces'
 import PathGenerator from '~/services/PathGenerator/PathGenerator'
 import CategoryRepository from '~/repositories/Category/CategoryRepository'
@@ -15,6 +17,8 @@ import PostRepository from '~/repositories/Post/PostRepository'
 import UserRepository from '~/repositories/User/UserRepository'
 import Observable from '~/events/core/Observable'
 import TagRepository from '~/repositories/Tag/TagRepository'
+import Scroll from '~/services/Scroll/Scroll'
+import CommentRepository from '~/repositories/Comment/CommentRepository'
 
 const serviceContainer = new Container()
 
@@ -24,6 +28,9 @@ serviceContainer.bind<PostRepositoryInterface>(TYPES.PostRepositoryInterface).to
 serviceContainer.bind<UserRepositoryInterface>(TYPES.UserRepositoryInterface).to(UserRepository)
 serviceContainer.bind<TagRepositoryInterface>(TYPES.TagRepositoryInterface).to(TagRepository)
 serviceContainer.bind<ObservableInterface>(TYPES.ObservableInterface).to(Observable)
+serviceContainer.bind<ScrollInterface>(TYPES.ScrollInterface).to(Scroll)
+serviceContainer.bind<CommentRepositoryInterface>(TYPES.CommentRepositoryInterface).to(CommentRepository)
+
 
 if (process.server) {
   // const a = '~/events/listeners/SignInListener'

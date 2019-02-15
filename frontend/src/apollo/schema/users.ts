@@ -3,6 +3,8 @@ import { CommentsInterface } from '~/apollo/schema/comments'
 
 export interface UserInterface {
   id: number
+  createdAt: string
+  updatedAt: string
   nickname: string
   email: string
   firstName: string
@@ -10,9 +12,7 @@ export interface UserInterface {
   fullName: string
   avatar: AvatarInterface
   gender: UserGenderStatus
-  // birthday: DateTime
-  // createdAt: DateTime! @rename(attribute: "created_at")
-  // updatedAt: DateTime! @rename(attribute: "updated_at")
+  birthday: string
   posts: PostsInterface
   comments: CommentsInterface
 }

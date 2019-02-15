@@ -6,6 +6,7 @@ export default processPlugins([
   //   src: 'notifications',
   //   ssr: false
   // },
+  'registerGlobalComponents',
   'notifications',
   'date',
   'serviceContainer',

@@ -22,6 +22,8 @@ class CreateUsersTable extends Migration
             $table->boolean('gender')->nullable();
             $table->date('birthday')->nullable();
             $table->json('avatar')->nullable();
+            $table->integer('posts_count')->default(0);
+            $table->integer('comments_count')->default(0);
 
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();

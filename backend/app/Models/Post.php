@@ -14,7 +14,7 @@ class Post extends BaseModel
 
     protected $fillable = [
         'title', 'title_slug', 'content', 'content_short', 'user_id', 'category_id', 'rating_value',
-        'rating_value_positive', 'rating_value_negative'
+        'rating_value_positive', 'rating_value_negative', 'comments_count'
     ];
 
     public function user(): BelongsTo
@@ -29,6 +29,9 @@ class Post extends BaseModel
 
     public function comments(): HasMany
     {
+//        return $this->hasMany(Comment::class);
+
+
         return $this->hasMany(Comment::class);
     }
 
@@ -38,10 +41,21 @@ class Post extends BaseModel
         return $this->belongsToMany(Tag::class);
     }
 
-    public function saveComment(Comment $comment)
-    {
-        return $this->comments()->save($comment);
-    }
+//    public function saveComment(Comment $comment): self
+//    {
+//        $this->increment('comments_count');
+//        $this->comments()->save($comment);
+//
+//        return $this;
+//    }
+//
+//    public function deleteComment(Comment $comment): self
+//    {
+//        $this->decrement('comments_count');
+//        $comment->d
+//
+//        return $this;
+//    }
 
     public function setTags(array $idArr)
     {

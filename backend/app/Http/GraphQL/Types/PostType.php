@@ -7,14 +7,19 @@ use GraphQL\Type\Definition\ResolveInfo;
 
 class PostType
 {
-    public function getRatingInfo(Post $root, array $args, $context, ResolveInfo $resolveInfo)
+//    public function getRatingInfo(Post $root, array $args, $context, ResolveInfo $resolveInfo)
+//    {
+//        return [
+//            'value' => $root->ratingValue
+//        ];
+//    }
+
+    public function getRootComments(Post $root, array $args, $context, ResolveInfo $resolveInfo)
     {
-//        dump($root, $args, $context, $resolveInfo);
-
-//        return '123';
-
-        return [
-            'value' => $root->ratingValue // $root->rating()
-        ];
+        return $root->comments()
+            ->orderBy('created_at', 'desc')
+            ->where('comment_id')
+            ->with('allRepliesComments')
+        ;
     }
 }

@@ -105,10 +105,8 @@
               class="pr-3"
               style="text-transform: none !important;"
             >
-              Авторизация
-              <!--{{ $auth.user.name }}-->
+              Аутентификация
             </span>
-            <!--<avatar />-->
           </v-btn>
 
           <v-card>

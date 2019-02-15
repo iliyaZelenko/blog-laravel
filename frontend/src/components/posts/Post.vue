@@ -19,7 +19,10 @@
 
         <v-spacer />
 
-        <rating :info="ratingInfo" />
+        <rating
+          :info="ratingInfo"
+          sm-buttons
+        />
       </v-card-title>
 
       <v-card-text class="pt-0">
@@ -30,26 +33,7 @@
         <div class="pl-3">
           <!--Автор: <b>{{ post.user.nickname }}</b> {{ post.user.fullName ? `(${post.user.fullName})` : '' }}-->
 
-          <profile-menu :user="post.user">
-            <v-layout
-              slot="activator"
-              align-center
-              @click="onUserClick"
-            >
-              <user-avatar :user="post.user" />
-
-              <span class="body-2 ml-2">
-                {{ post.user.nickname }}
-                <span
-                  v-if="post.user.fullName"
-                  class="grey--text"
-                >
-                  <br>
-                  {{ post.user.fullName }}
-                </span>
-              </span>
-            </v-layout>
-          </profile-menu>
+          <user :user="post.user" />
         </div>
 
         <v-spacer />
@@ -75,12 +59,11 @@ import { Inject } from 'vue-inversify-decorator'
 import { TYPES } from '~/configs/dependencyInjection/types'
 import { PathGeneratorInterface } from '~/configs/dependencyInjection/interfaces'
 import { PostInterface } from '~/apollo/schema/posts'
-import UserAvatar from '~/components/user/avatar/UserAvatar.vue'
-import ProfileMenu from '~/components/user/ProfileMenu.vue'
 import Rating from '~/components/rating/Rating.vue'
+import User from '~/components/user/User.vue'
 
 @Component({
-  components: { UserAvatar, ProfileMenu, Rating }
+  components: { User, Rating }
 })
 export default class Post extends Vue {
   @Prop(Object) post!: PostInterface
@@ -102,17 +85,6 @@ export default class Post extends Vue {
         params: {
           id: this.post.id.toString(),
           slug: this.post.titleSlug
-        }
-      })
-    )
-  }
-
-  onUserClick () {
-    this.$router.push(
-      this.pathGenerator.generate({
-        name: 'profile-user',
-        params: {
-          user: this.post.user.id.toString()
         }
       })
     )

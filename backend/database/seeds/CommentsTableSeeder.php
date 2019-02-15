@@ -20,6 +20,7 @@ class CommentsTableSeeder extends Seeder
         if ($createCommentsCounts < 1) return;
 
         while (1) {
+            /** @var \App\Models\Post $post */
             $post = \App\Models\Post::inRandomOrder()->first();
 
             for ($k = 0; $k < $createCommentsForFoundPost; $k++) {
@@ -27,7 +28,7 @@ class CommentsTableSeeder extends Seeder
                     'comment_id' => $this->getRepliedCommentId($post),
                 ]);
 
-                $post->saveComment($comment);
+                $post->comments()->save($comment);
 
                 if (--$createCommentsCounts < 1) return;
             }

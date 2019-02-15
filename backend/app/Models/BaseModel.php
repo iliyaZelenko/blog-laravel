@@ -16,7 +16,7 @@ class BaseModel extends Eloquent
      * @param $query
      * @return Builder
      */
-    public function scopeOrderByDESC($query): Builder
+    public function scopeOrderByDESC(Builder $query): Builder
     {
         return $query->orderBy('created_at', 'desc');
     }
@@ -27,8 +27,8 @@ class BaseModel extends Eloquent
      * @param $query
      * @return Builder
      */
-    public function scopeOrderByASC($query): Builder
+    public function scopeOrderByASC(Builder $query): Builder
     {
-        return $query->orderBy('created_at', 'asc');
+        return $query->orderBy('created_at');
     }
 }

@@ -3,6 +3,8 @@ export const TYPES = {
   CategoryRepositoryInterface: Symbol.for('CategoryRepositoryInterface'),
   PostRepositoryInterface: Symbol.for('PostRepositoryInterface'),
   UserRepositoryInterface: Symbol.for('UserRepositoryInterface'),
+  TagRepositoryInterface: Symbol.for('TagRepositoryInterface'),
   ObservableInterface: Symbol.for('ObservableInterface'),
-  TagRepositoryInterface: Symbol.for('TagRepositoryInterface')
+  ScrollInterface: Symbol.for('ScrollInterface'),
+  CommentRepositoryInterface: Symbol.for('CommentRepositoryInterface')
 }

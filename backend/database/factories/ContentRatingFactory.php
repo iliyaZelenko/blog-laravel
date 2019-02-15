@@ -41,10 +41,8 @@ $factory->afterCreating(\App\Models\ContentRating::class, function (\App\Models\
     $val = abs($contentRating->value);
 
     if ($contentRating->value > 0) {
-        $content->increment('rating_value', $val);
-        $content->increment('rating_value_positive', $val);
+        $content->addRating($val);
     } else {
-        $content->decrement('rating_value', $val);
-        $content->increment('rating_value_negative', $val);
+        $content->subtractRating($val);
     }
 });

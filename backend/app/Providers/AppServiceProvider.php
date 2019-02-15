@@ -2,6 +2,12 @@
 
 namespace App\Providers;
 
+use App\Models\Category;
+use App\Models\Comment;
+use App\Models\Post;
+use App\Observers\CategoryObserver;
+use App\Observers\CommentObserver;
+use App\Observers\PostObserver;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Schema;
 
@@ -14,8 +20,12 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        // TODO желательно удалить
-//        Schema::defaultStringLength(191);
+        // TODO для всех
+        Comment::observe(CommentObserver::class);
+        Category::observe(CategoryObserver::class);
+        Post::observe(PostObserver::class);
+
+        // Schema::defaultStringLength(191);
     }
 
     /**

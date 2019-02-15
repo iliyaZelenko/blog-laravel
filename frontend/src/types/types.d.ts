@@ -130,6 +130,7 @@ declare module 'vue/types/vue' {
     $cookies: NuxtCookies
     $auth: any
     $formValidator: any
+    $notify: any
     localePath (route: RawLocation, locale?: string): string
     $actionWithLoading (action: string, loadingVariable: string, ...arg: any)
     // locale

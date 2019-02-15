@@ -8,6 +8,8 @@ import { GET_ALL_POSTS_QUERY } from '~/apollo/queries/posts/getAllPosts'
 
 @injectable()
 export default class PostRepository extends BaseRepository implements PostRepositoryInterface {
+  public readonly POST_COMMENTS_PER_PAGE = 10
+
   public async getCategoryPosts (categoryId: number, page: number = 1): Promise<PostsInterface> {
     const {
       data: {
@@ -35,10 +37,10 @@ export default class PostRepository extends BaseRepository implements PostReposi
     return allPosts
   }
 
-  public async getPost (id: number): Promise<PostInterface> {
+  public async getPost (id: number, commentsPerPage: number = this.POST_COMMENTS_PER_PAGE): Promise<PostInterface> {
     const { data: { post } } = await global._$app.$apollo.query({
       query: GET_POST_QUERY,
-      variables: { id }
+      variables: { id, commentsPerPage }
     })
 
     return post

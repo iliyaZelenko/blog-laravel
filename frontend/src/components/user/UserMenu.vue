@@ -113,10 +113,10 @@ import UserAvatar from '~/components/user/avatar/UserAvatar.vue'
 import { PathGeneratorInterface } from '~/configs/dependencyInjection/interfaces'
 
 @Component({
-  name: 'ProfileMenu',
+  name: 'UserMenu',
   components: { UserAvatar }
 })
-export default class ProfileMenu extends Vue {
+export default class UserMenu extends Vue {
   @Prop(Object) user!: UserInterface
 
   @Inject(TYPES.PathGeneratorInterface) private pathGenerator!: PathGeneratorInterface

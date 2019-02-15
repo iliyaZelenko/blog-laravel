@@ -1,5 +1,6 @@
 import { CategoryInterface } from '~/apollo/schema/categories'
 import { TagInterface } from '~/apollo/schema/tags'
+import { CommentsInterface } from '~/apollo/schema/comments'
 
 export interface PostsInterface {
   data: PostInterface[]
@@ -13,6 +14,8 @@ export interface PostsInterface {
 
 export interface PostInterface {
   id: number
+  createdAt: string
+  updatedAt: string
   title: string
   titleSlug: string
   contentShort: string
@@ -26,4 +29,5 @@ export interface PostInterface {
   }
   category: CategoryInterface
   tags: TagInterface[]
+  comments: CommentsInterface
 }

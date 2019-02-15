@@ -24,6 +24,7 @@ class CreatePostsTable extends Migration
             $table->integer('rating_value')->default(0);
             $table->integer('rating_value_positive')->default(0);
             $table->integer('rating_value_negative')->default(0);
+            $table->integer('comments_count')->default(0);
             $table->timestamps();
 
             $table

@@ -10,9 +10,13 @@
       </small>
 
       <v-btn
+        :small="isSmall"
         icon
       >
-        <v-icon color="green">
+        <v-icon
+          :small="isSmall"
+          color="green"
+        >
           thumb_up_alt
         </v-icon>
       </v-btn>
@@ -30,9 +34,13 @@
       <!--Отдельно сколько дизлайков, лайков и сколько в сумме, инфа по пользователям-->
 
       <v-btn
+        :small="isSmall"
         icon
       >
-        <v-icon color="red">
+        <v-icon
+          :small="isSmall"
+          color="red"
+        >
           thumb_down_alt
         </v-icon>
       </v-btn>
@@ -65,5 +73,10 @@ import RatingInfoInterface from '~/components/rating/RatingInfoInterface'
 @Component
 export default class Rating extends Vue {
   @Prop(Object) info!: RatingInfoInterface
+  @Prop({ default: false }) smButtons!: boolean
+
+  get isSmall (): boolean {
+    return this.smButtons
+  }
 }
 </script>

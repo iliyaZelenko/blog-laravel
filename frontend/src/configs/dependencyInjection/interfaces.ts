@@ -3,4 +3,6 @@ export { default as CategoryRepositoryInterface } from '~/repositories/Category/
 export { default as PostRepositoryInterface } from '~/repositories/Post/PostRepositoryInterface'
 export { default as UserRepositoryInterface } from '~/repositories/User/UserRepositoryInterface'
 export { default as TagRepositoryInterface } from '~/repositories/Tag/TagRepositoryInterface'
+export { default as CommentRepositoryInterface } from '~/repositories/Comment/CommentRepositoryInterface'
 export { default as ObservableInterface } from '~/events/core/ObservableInterface'
+export { default as ScrollInterface } from '~/services/Scroll/ScrollInterface'

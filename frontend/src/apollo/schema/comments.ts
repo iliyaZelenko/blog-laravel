@@ -13,9 +13,14 @@ export interface CommentsInterface {
 
 export interface CommentInterface {
   id: number
+  createdAt: string
+  updatedAt: string
   content: string
+  ratingValue: number
+  ratingValuePositive: number
+  ratingValueNegative: number
   user: UserInterface
   post: PostInterface
-  repliedComment: UserInterface
+  repliedComment: CommentInterface
   repliesComments: CommentsInterface
 }

@@ -9,7 +9,7 @@ export const vp = Vue.prototype
 //   if (process.server && context) {
 //     const { app } = context
 //
-//     app.$cookies.set('showErrorInBrowser', error)
+//     app.$cookies.set('showMessagesInBrowser', error)
 //   } else {
 //     vp.$notify.error(error)
 //   }

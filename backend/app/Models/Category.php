@@ -106,47 +106,45 @@ class Category extends BaseModelBaum {
         return +$this->rgt - +$this->lft !== 1;
     }
 
-    // TODO красиво вынести или убрать
-    public function savePost(Post $post)
-    {
-        $this->increment('posts_count');
+//    public function savePost(Post $post)
+//    {
+////        $this->increment('posts_count');
+//
+//        // обновляет кол-во постов в родителських категориях
+////        $this->ancestorsAndSelf()->get()->each(function(Category $ancestor) {
+////            $ancestor->increment('all_posts_count');
+////        });
+////        $question->autor()->increment('messages_count');
+//
+//        // сохраняет пост
+//        $this->posts()->save($post);
+//    }
 
-        // обновляет кол-во постов в родителських категориях
-        $this->ancestorsAndSelf()->get()->each(function(Category $ancestor) {
-            $ancestor->increment('all_posts_count');
-        });
-//        $question->autor()->increment('messages_count');
+//    public function deletePost(Post $post)
+//    {
+////        $this->decrement('posts_count');
+//
+//        // обновляет кол-во постов в родителських категориях
+////        $this->ancestorsAndSelf()->get()->each(function (Category $ancestor) {
+////            $ancestor->decrement('all_posts_count');
+////        });
+////        $topic->autor()->decrement('messages_count');
+//
+//        // удаляет пост
+//        $post->delete();
+//    }
 
-        // сохраняет пост
-        $this->posts()->save($post);
-    }
-
-    // TODO красивы вынести или убрать
-    public function deletePost(Post $post)
-    {
-        $this->decrement('posts_count');
-
-        // обновляет кол-во постов в родителських категориях
-        $this->ancestorsAndSelf()->get()->each(function (Category $ancestor) {
-            $ancestor->decrement('all_posts_count');
-        });
-//        $topic->autor()->decrement('messages_count');
-
-        // удаляет пост
-        $post->delete();
-    }
-
-    public function saveChildren(Category $category): void
-    {
-        $this->increment('children_count');
-
-        // обновляет кол-во детей в родителських категориях
-        $this->ancestorsAndSelf()->get()->each(function(Category $ancestor) {
-            $ancestor->increment('all_children_count');
-        });
-
-        $this->children()->save($category);
-    }
+//    public function saveChildren(Category $category): void
+//    {
+////        $this->increment('children_count');
+//
+//        // обновляет кол-во детей в родителських категориях
+//        $this->getAncestorsAndSelf()->each(function(Category $ancestor) {
+//            $ancestor->increment('all_children_count');
+//        });
+//
+//        $this->children()->save($category);
+//    }
 
 //    // TODO красиво вынести или убрать
 //    public function saveQuestion($question)

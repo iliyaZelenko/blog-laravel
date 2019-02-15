@@ -13,7 +13,7 @@
           />
 
           <div class="ml-3">
-            <b>{{ owner.name }}</b>
+            <b>{{ owner.nickname }}</b>
             <span class="pl-2 grey--text">
               {{ post.typeText }}
             </span>

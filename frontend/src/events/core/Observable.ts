@@ -6,21 +6,38 @@ import ListenerInterface from '~/events/listeners/ListenerInterface'
 
 @injectable()
 export default class Observable implements ObservableInterface {
-  public async emit<Event> (eventName: string, param: Event | any) {
-    const thisEventlisteners = bindListenersConfig.listeners[eventName]
+  private listeners = {}
 
-    for (const listener of thisEventlisteners) {
-      // без шаблонной строки `${listener}` быдет предупреждение
-      const classListener = require(`~/events/listeners/${listener}`).default
-      let instance: ListenerInterface<any>
+  public async emit<Event> (eventName: string, param?: Event | any) {
+    const thisEventListeners = bindListenersConfig.listeners[eventName]
 
-      if (!serviceContainer.isBound(classListener.name)) {
-        serviceContainer.bind(classListener.name).to(classListener)
+    if (thisEventListeners) {
+      // Уведомляет класс-слушателей
+      for (const listener of thisEventListeners) {
+        // без шаблонной строки `${listener}` быдет предупреждение
+        const classListener = require(`~/events/listeners/${listener}`).default
+        let instance: ListenerInterface<any>
+
+        if (!serviceContainer.isBound(classListener.name)) {
+          serviceContainer.bind(classListener.name).to(classListener)
+        }
+
+        instance = serviceContainer.get<ListenerInterface<any>>(classListener.name)
+
+        return instance.handle(param)
       }
+    } else { // Уведомляет локальных слушателей
+      if (!this.listeners[eventName]) return
 
-      instance = serviceContainer.get<ListenerInterface<any>>(classListener.name)
-
-      return instance.handle(param)
+      for (const listener of this.listeners[eventName]) {
+        listener(param)
+      }
     }
+  }
+
+  public async on (eventName: string, callback: (param?: any) => any) {
+    if (!this.listeners[eventName]) this.listeners[eventName] = []
+
+    this.listeners[eventName].push(callback)
   }
 }

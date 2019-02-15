@@ -40,13 +40,15 @@ class CategoriesTableSeeder extends Seeder
                 array_except($item, ['_children', '_posts'])
             );
 
-            $category = new Category($fields);
+//            $category = new Category($fields);
+            $category = Category::create($fields);
 
-            if ($parent) {
-                $parent->saveChildren($category);
-            }
+//            if ($parent) {
+//                $parent->saveChildren($category);
+//            }
 
             $this->setPath($category, $urlPrefix);
+            $category->save();
 
 //            if (isset($item['_posts'])) {
 //                $this->createPosts($category, $item['_posts']);
@@ -66,7 +68,7 @@ class CategoriesTableSeeder extends Seeder
 
     protected function setPath(Category $model, $urlPrefix): void
     {
-        if (is_null($model->parent_id)) {
+        if ($model->parent_id === null) {
             $pathAttribute = $model->name_slug;
         } else {
             // getAncestorsAndSelf возращает коллекцию, ancestorsAndSelf возвращал бы экземпляр Illuminate\Database\Eloquent\Builder
@@ -77,7 +79,6 @@ class CategoriesTableSeeder extends Seeder
         }
 
         $model->path = $urlPrefix . $pathAttribute;
-        $model->save();
     }
 
 //    protected function createPosts(Category $category, $arr): void

@@ -1,35 +1,36 @@
-// import Vue from 'vue'
-// import VueNotifications from 'vue-notifications'
-// import iziToast from 'izitoast' // https://github.com/dolce/iziToast
-// import 'izitoast/dist/css/iziToast.min.css'
+// методы объекта $notify
+const options = ['success', 'error', 'info', 'warn']
+// объект который будет инджектится в Nuxt
+const $notify = {}
+// сообщения появившиеся на сервере. Должны показаться в браузере, при клиентском рендеринге.
+const serverMessages = []
 
-// on browser
-function showBrowserMsg ({ title, message, type, timeout, cb }) {
+for (let type of options) {
+  $notify[type] = (title, message = '', { timeout = 3000 } = {}) => {
+    if (process.browser) {
+      showBrowserMsg({ title, message, type, timeout })
+    } else {
+      addServerMsg({ title, message, type, timeout })
+    }
+  }
+}
+
+// Сразу показывает сообщение в браузере
+function showBrowserMsg ({ title, message, type, timeout }) {
+  // require внутри этой ф-ии, а не через import, чтобы не было ошибок в SSR
   const iziToast = require('izitoast')
   require('izitoast/dist/css/iziToast.min.css')
 
-  // if (type === VueNotifications.types.warn) type = 'warning'
   if (type === 'warn') type = 'warning'
 
   return iziToast[type]({ title, message, timeout })
 }
 
-const options = ['success', 'error', 'info', 'warn']
-const $notify = {}
-
-for (let type of options) {
-  $notify[type] = (title, message = '', { timeout = 3000 } = {} /* <-- this arg is like options */) => {
-    if (process.browser) {
-      showBrowserMsg({ title, message, type, timeout })
-    } else {
-      // TODO Not only error
-      global._$app.$cookies.set('showErrorInBrowser', title + '. ' + message)
-    }
-  }
+// Добавляет сообщение сервера
+function addServerMsg ({ title, message, type, timeout }) {
+  serverMessages.push({ title, message, type, timeout })
+  global._$app.$cookies.set('showMessagesInBrowser', serverMessages)
 }
-
-// Vue.use(VueNotifications, options)
-// Vue.prototype.$notify = $notify
 
 export default ({ store, app }, inject) => {
   inject('notify', $notify)

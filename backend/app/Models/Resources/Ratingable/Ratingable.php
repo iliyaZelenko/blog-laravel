@@ -11,6 +11,18 @@ trait Ratingable
         return $this->morphMany(ContentRating::class, 'content');
     }
 
+    public function addRating($val)
+    {
+        $this->increment('rating_value', $val);
+        $this->increment('rating_value_positive', $val);
+    }
+
+    public function subtractRating($val)
+    {
+        $this->decrement('rating_value', $val);
+        $this->increment('rating_value_negative', $val);
+    }
+
     public function rating(): int
     {
         return +$this->ratings()->sum('value');

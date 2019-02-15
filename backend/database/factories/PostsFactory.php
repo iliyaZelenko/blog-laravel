@@ -38,5 +38,7 @@ $factory->define(\App\Models\Post::class, function () use ($faker) {
 });
 
 $factory->afterCreating(\App\Models\Post::class, function (\App\Models\Post $post, $faker) {
-    $post->category->savePost($post);
+    // $post->category->savePost($post);
+
+    $post->category->posts()->save($post);
 });

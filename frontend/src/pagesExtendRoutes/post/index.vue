@@ -9,6 +9,7 @@
       align-center
       wrap
     >
+      <!--
       <profile-menu :user="post.user">
         <v-layout
           slot="activator"
@@ -29,6 +30,8 @@
           </span>
         </v-layout>
       </profile-menu>
+      -->
+      <user :user="post.user" />
 
       <v-icon class="ml-4">
         category
@@ -66,9 +69,21 @@
       {{ post.content }}
     </p>
 
-    <pre>
+    <v-card style="position: absolute; width: 100vw; left: 0;">
+      <v-container>
+        <!--:root-comments-per-page="rootCommentsPerPage"-->
+        <post-comments
+          :comments.sync="post.comments"
+          :post="post"
+          :is-root="true"
+          :inner-lvl="1"
+        />
+      </v-container>
+    </v-card>
+
+    <!--<pre>
       {{ post }}
-    </pre>
+    </pre>-->
   </div>
 </template>
 
@@ -82,15 +97,16 @@ import { PathGeneratorInterface, PostRepositoryInterface } from '~/configs/depen
 import { CategoryInterface } from '~/apollo/schema/categories'
 import { PostInterface } from '~/apollo/schema/posts'
 import { serviceContainer } from '~/configs/dependencyInjection/container'
-import UserAvatar from '~/components/user/avatar/UserAvatar.vue'
 import Tags from '~/components/posts/post/tags/Tags.vue'
-import ProfileMenu from '~/components/user/ProfileMenu.vue'
 import Rating from '~/components/rating/Rating.vue'
+// import PostComments from '~/components/posts/post/comments/PostComments.vue' PostComments,
+import User from '~/components/user/User.vue'
 
 const PathGenerator = serviceContainer.get<PathGeneratorInterface>(TYPES.PathGeneratorInterface)
 
 @Component({
-  components: { UserAvatar, ProfileMenu, Tags, Rating },
+  name: 'Post',
+  components: { User, Tags, Rating },
   scrollToTop: true
 })
 export default class Post extends Vue {
@@ -102,11 +118,12 @@ export default class Post extends Vue {
   // @Inject(TYPES.PostRepositoryInterface) private postRepo!: PostRepositoryInterface
 
   public post!: PostInterface
+  // public rootCommentsPerPage!: number
 
   async asyncData ({ app, redirect, error, params: { id, slug } }) {
     const PostRepo = serviceContainer.get<PostRepositoryInterface>(TYPES.PostRepositoryInterface)
-
-    const post = await PostRepo.getPost(id)
+    const rootCommentsPerPage = PostRepo.POST_COMMENTS_PER_PAGE
+    const post = await PostRepo.getPost(id, rootCommentsPerPage)
 
     if (!post) {
       return error({
@@ -118,7 +135,10 @@ export default class Post extends Vue {
       redirect(getPostPath(post))
     }
 
-    return { post }
+    return {
+      post
+      // rootCommentsPerPage
+    }
   }
 
   get ratingInfo () {

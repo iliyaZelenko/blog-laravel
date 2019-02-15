@@ -55,20 +55,20 @@ const TagRepo = serviceContainer.get<TagRepositoryInterface>(TYPES.TagRepository
 })
 export default class Posts extends Vue {
   async asyncData () {
-    const page = 1
+    // const page = 1
     const posts = await PostRepo.getAll()
     const tags = await TagRepo.getAllTags()
 
     return {
       posts,
-      tags,
-      page
+      tags
+      // page
     }
   }
 
   public posts!: PostsInterface
   public tags!: any[]
-  public page!: number
+  // public page!: number
   public loading: boolean = false
 
   @Watch('page')
