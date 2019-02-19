@@ -12,6 +12,7 @@
   },
   "rules": {
     /* Ilya Zelen tastes */
+    "object-literal-key-quotes": false,
     "interface-name": [true, "never-prefix"],
     "prefer-const": true,
     "ordered-imports": [false],
@@ -21,7 +22,7 @@
 
     // it is important for the imports work
     "no-implicit-dependencies": [true, ["~", "@"]],
-    "no-submodule-imports": [true, "~", "@"],
+    "no-submodule-imports": false, // [true, "~", "@"],
 
     "quotemark": [true, "single"],
     "semicolon": [true, "never"],

@@ -1,3 +1,7 @@
+import * as env from '~/../env'
+
+global.appEnv = env
+
 export default ({ app }) => {
   if (process.server) {
     global._$app = app
@@ -11,3 +15,13 @@ export default ({ app }) => {
     // console.log(window._$app)
   }
 }
+
+// declare global {
+//   namespace NodeJS {
+//     interface Global {
+//       appEnv: any
+//       _$app: any
+//     }
+//   }
+// }
+

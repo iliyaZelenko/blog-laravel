@@ -14,7 +14,9 @@ export const rules: object = {
   email: 'email',
   // emailLabel: 'min:3|max:20', // alpha_spaces
   // phoneLabel: 'min:3|max:20',
-  password: 'required|min:5'
+  password: 'required|min:5',
+  // posts
+  'comment-message': 'required|min:5' // |minLengthWithoutTags:10|maxLengthWithoutTags:2000
   // phone: 'numeric|min:9|max:15',
   // topics
   // 'topic-title': 'required|alpha_spaces|min:10|max:150',
@@ -47,4 +49,10 @@ export const showServerError = ({ data }) => {
   // } else {
   //   console.error(message)
   // }
+}
+
+export function validatorSwitchLocale (locale) {
+  const veeValidateLocale = require('vee-validate/dist/locale/' + locale)
+
+  validator.localize(locale, veeValidateLocale)
 }

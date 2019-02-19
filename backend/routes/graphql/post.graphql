@@ -20,3 +20,15 @@ type Post {
 
     tags: [Tag]! @belongsToMany
 }
+
+type Tag {
+    id: ID!
+    createdAt: DateTime! @rename(attribute: "created_at")
+    updatedAt: DateTime! @rename(attribute: "updated_at")
+    name: String!
+    about: String!
+    postsCount: Int! @rename(attribute: "posts_count")
+
+    # Relations
+    category: Category! @belongsTo
+}

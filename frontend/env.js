@@ -1,7 +1,17 @@
 import { join } from 'path'
 
+let root
+
+// if (process.browser) {
+//   root = '~/../'
+// } else {
+root = process.cwd()
+// ниже хоть и process.cwd() возвращало путь, а __dirname был undefined, но возвращалось FALSE!
+// root = __dirname || process.cwd()
+// }
+
 /* Paths */
-export const ROOT_DIR = __dirname
+export const ROOT_DIR = root
 // TODO возможно это как-то убрать чтобы не усложнять конфиг
 export const SRC_DIR = join(ROOT_DIR, 'src')
 export const STYLES_DIR = join(SRC_DIR, 'styles')

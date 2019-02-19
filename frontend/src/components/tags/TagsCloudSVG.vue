@@ -117,8 +117,6 @@ export default class TagsCloudSVG extends Vue {
     this.tagsData = this.getTagsData()
     this.loading = true
 
-    console.log(this.tagsData)
-
     // remove content
     if (wrapper) wrapper.innerHTML = ''
 

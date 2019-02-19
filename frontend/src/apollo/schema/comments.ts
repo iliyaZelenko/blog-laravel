@@ -3,11 +3,12 @@ import { UserInterface } from '~/apollo/schema/users'
 
 export interface CommentsInterface {
   data: CommentInterface[]
-  paginatorInfo: {
-    lastPage: number
-    currentPage: number
+  paginatorInfo?: {
     count: number
+    currentPage: number
+    perPage: number
     total: number
+    lastPage: number
   }
 }
 
@@ -19,8 +20,16 @@ export interface CommentInterface {
   ratingValue: number
   ratingValuePositive: number
   ratingValueNegative: number
+  repliesCount: number
   user: UserInterface
   post: PostInterface
   repliedComment: CommentInterface
   repliesComments: CommentsInterface
+}
+
+export interface CommentCreationInputInterface {
+  postId: number
+  userId: number
+  commentId?: number
+  content: string
 }

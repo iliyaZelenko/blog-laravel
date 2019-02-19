@@ -10,6 +10,8 @@ export default {
     nickname: 'ник',
     // nicknameOrEmail: 'почта/ник',
     password: 'пароль',
+    'comment-message': 'сообщение',
+
     // passwordConfirm: 'повтор пароля',
     currentPassword: 'текущий пароль',
     newPassword: 'новый пароль',

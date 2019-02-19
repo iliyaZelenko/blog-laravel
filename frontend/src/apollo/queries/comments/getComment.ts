@@ -1,16 +1,13 @@
 import gql from 'graphql-tag'
 
-export const GET_COMMENT_REPLIES_QUERY = gql`
-  query GetCommentRepliesQuery($id: ID!, $repliesPage: Int = 1, $repliesPerPage: Int = 10) {
+export const GET_COMMENT_QUERY = gql`
+  query GetCommentQuery($id: ID!, $repliesPage: Int = 1, $repliesPerPage: Int = 10) {
     comment (id: $id) {
+      ...CommentsFields
+
       repliesComments (page: $repliesPage, count: $repliesPerPage) {
         data {
           ...CommentsFields
-#          repliesComments(count: 1) {
-#            data {
-#              ...CommentsFields
-#            }
-#          }
         }
         paginatorInfo {
           count

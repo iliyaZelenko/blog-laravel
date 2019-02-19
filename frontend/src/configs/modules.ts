@@ -1,6 +1,9 @@
+// строчка ниже не работает
+// import * as i18n from '~/configs/i18n'
 import { join } from 'path'
-const { LOCALES, DEFAULT_LOCALE, BASE_URL, FALLBACK_LOCALE, I18N_DIR } = global.appEnv
-const i18nMessages = require(join(I18N_DIR, 'messages')).default
+const { CONFIGS_DIR } = global.appEnv
+
+const i18n = require(`${join(CONFIGS_DIR, 'i18n.ts')}`)
 
 export default [
   // '~/modules/myModule.ts',
@@ -8,16 +11,5 @@ export default [
   '@nuxtjs/apollo',
   '@nuxtjs/style-resources',
   'cookie-universal-nuxt',
-  ['nuxt-i18n', {
-    seo: false,
-    parsePages: false, // отключает acorn
-    locales: LOCALES,
-    defaultLocale: DEFAULT_LOCALE,
-    baseUrl: BASE_URL,
-    strategy: 'prefix_except_default',
-    vueI18n: {
-      fallbackLocale: FALLBACK_LOCALE,
-      messages: i18nMessages
-    }
-  }]
+  ['nuxt-i18n', i18n]
 ]

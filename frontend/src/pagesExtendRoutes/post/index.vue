@@ -76,7 +76,7 @@
           :comments.sync="post.comments"
           :post="post"
           :is-root="true"
-          :inner-lvl="1"
+          :nested-lvl="0"
         />
       </v-container>
     </v-card>
@@ -107,7 +107,15 @@ const PathGenerator = serviceContainer.get<PathGeneratorInterface>(TYPES.PathGen
 @Component({
   name: 'Post',
   components: { User, Tags, Rating },
-  scrollToTop: true
+  scrollToTop: true,
+  head () {
+    return {
+      title: this.post.title,
+      meta: [
+        { content: `Просмотр поста "${this.post.title}"`, name: 'description', hid: 'description' }
+      ]
+    }
+  }
 })
 export default class Post extends Vue {
   @Prop(String) id!: string

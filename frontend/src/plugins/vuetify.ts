@@ -4,13 +4,7 @@ import Vuetify from 'vuetify'
 import 'vuetify/dist/vuetify.min.css'
 // IE 11 + Safari 9
 import 'babel-polyfill'
-
-Vue.use(Vuetify, {
-  lang: {
-    locales: { zhHans, pl, sv },
-    current: 'zhHans'
-  }
-})
+import { defaultLocale, vuetifyLocales } from '~/configs/i18n'
 
 // Vue.use(Vuetify, {
 //   theme: {
@@ -61,6 +55,18 @@ Vue.prototype.$breakpoint = new Vue({
 
 // async
 export default function ({ app }) {
+  const locales = {}
+  Object.entries(vuetifyLocales).forEach(([key, path]) => locales[key] = path)
+
+  // console.log(locales, defaultLocale)
+
+  Vue.use(Vuetify, {
+    lang: {
+      locales,
+      current: defaultLocale
+    }
+  })
+
   if (!app.mixins) {
     app.mixins = []
   }

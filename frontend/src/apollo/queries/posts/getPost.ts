@@ -1,5 +1,7 @@
 import gql from 'graphql-tag'
 
+export const COMMENTS_MAX_NESTED_LVL: number = 2
+
 export const GET_POST_QUERY = gql`
   query GetPostQuery($id: ID!, $commentsPage: Int = 1, $commentsPerPage: Int = 10) {
     post (id: $id) {
@@ -33,31 +35,33 @@ export const GET_POST_QUERY = gql`
         about
       }
       comments (page: $commentsPage, count: $commentsPerPage) {
+        # еслим меняете уровень вложенноси, то меняйте COMMENTS_MAX_NESTED_LVL
         data {
-          ...CommentsFields
-          repliesComments(count: 1) {
+          ...CommentDataFields
+          # первый уровень вложенности
+          repliesComments (count: 1) {
             data {
-              ...CommentsFields
+              ...CommentDataFields
+              # второй уровень вложенности
 #              repliesComments(count: 1) {
 #                data {
-#                  ...CommentsFields
+#                  ...CommentFields
 #                }
 #              }
             }
+#            paginatorInfo {
+#              ...CommentPaginatorFields
+#            }
           }
         }
         paginatorInfo {
-          count
-          currentPage
-          perPage
-          total
-          lastPage
+          ...CommentPaginatorFields
         }
       }
     }
   }
 
-  fragment CommentsFields on Comment {
+  fragment CommentDataFields on Comment {
     id
     content
     createdAt
@@ -77,5 +81,13 @@ export const GET_POST_QUERY = gql`
       gender
       age
     }
+  }
+
+  fragment CommentPaginatorFields on PaginatorInfo {
+    count
+    currentPage
+    perPage
+    total
+    lastPage
   }
 `

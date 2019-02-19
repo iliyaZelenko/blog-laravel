@@ -21,7 +21,9 @@ class CommentsTableSeeder extends Seeder
 
         while (1) {
             /** @var \App\Models\Post $post */
-            $post = \App\Models\Post::inRandomOrder()->first();
+            // $post = \App\Models\Post::inRandomOrder()->first();
+            /** @var \App\Models\Post $post */
+            $post = \App\Models\Post::find(1);
 
             for ($k = 0; $k < $createCommentsForFoundPost; $k++) {
                 $comment = factory(\App\Models\Comment::class)->make([
