@@ -5,7 +5,12 @@ import 'vuetify/dist/vuetify.min.css'
 // IE 11 + Safari 9
 import 'babel-polyfill'
 
-Vue.use(Vuetify)
+Vue.use(Vuetify, {
+  lang: {
+    locales: { zhHans, pl, sv },
+    current: 'zhHans'
+  }
+})
 
 // Vue.use(Vuetify, {
 //   theme: {

@@ -32,4 +32,9 @@ export default ({ app, store }, inject) => {
   })
 
   inject('i18n', plugin)
+
+  // https://github.com/nuxt-community/nuxt-i18n/blob/513cbf92f9aca614b62c37a96c7476941d0ccf4d/docs/callbacks.md#usage
+  app.i18n.beforeLanguageSwitch = (oldLocale, newLocale) => {
+    console.log(oldLocale, newLocale)
+  }
 }
