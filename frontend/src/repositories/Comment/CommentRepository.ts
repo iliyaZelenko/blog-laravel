@@ -6,15 +6,21 @@ import { CommentCreationInputInterface, CommentsInterface } from '~/apollo/schem
 import { GET_COMMENTS_BY_POST_QUERY } from '~/apollo/queries/comments/getCommentsByPost'
 import { CREATE_COMMENT_MUTATION } from '~/apollo/mutations/comments/createComment'
 import { GET_COMMENT_QUERY } from '~/apollo/queries/comments/getComment'
+import { GET_COMMENT_REPLIES_ALL_QUERY } from '~/apollo/queries/comments/getCommentRepliesAll'
+import {
+  COMMENT_COMMENTS_REPLIES_ALL_PER_PAGE_DEFAULT,
+  COMMENT_COMMENTS_REPLIES_PER_PAGE_DEFAULT,
+  ROOT_COMMENTS_BY_POST_PER_PAGE_DEFAULT,
+  ROOT_COMMENTS_REPLIES_PREVIEW_COUNT_DEFAULT
+} from '~/configs/app'
 
 @injectable()
 export default class CommentRepository extends BaseRepository implements CommentRepositoryInterface {
-  public readonly COMMENTS_PER_PAGE = 5
 
   public async getCommentRepliesPaginated (
     commentId: number,
-    repliesPage: number = 1,
-    repliesPerPage: number = this.COMMENTS_PER_PAGE
+    repliesPage: number | undefined = 1,
+    repliesPerPage: number | undefined = COMMENT_COMMENTS_REPLIES_PER_PAGE_DEFAULT
   ): Promise<CommentsInterface> {
     const {
       data: {
@@ -28,16 +34,47 @@ export default class CommentRepository extends BaseRepository implements Comment
         id: commentId,
         repliesPage,
         repliesPerPage
-      }
+      },
+      // из-за кеширования повторный запрос возвращает старый результат. Пример повторного запроса: добавляется коммент
+      // в другой коммент, после обновления обновляется список комментов через запрос, если еще раз так добавить то и
+      // будет возвращен старый результат
+      fetchPolicy: 'no-cache'
     })
 
     return repliesComments
   }
 
-  public async getComment (
+  public async getCommentRepliesAllPaginated (
     commentId: number,
     repliesPage: number | undefined = 1,
-    repliesPerPage: number | undefined = this.COMMENTS_PER_PAGE
+    repliesPerPage: number | undefined = COMMENT_COMMENTS_REPLIES_ALL_PER_PAGE_DEFAULT
+  ): Promise<CommentsInterface> {
+    const {
+      data: {
+        comment: {
+          allNestedRepliesComments
+        }
+      }
+    } = await global._$app.$apollo.query({
+      query: GET_COMMENT_REPLIES_ALL_QUERY,
+      variables: {
+        id: commentId,
+        repliesPage,
+        repliesPerPage
+      },
+      // из-за кеширования повторный запрос возвращает старый результат. Пример повторного запроса: добавляется коммент
+      // в другой коммент, после обновления обновляется список комментов через запрос, если еще раз так добавить то и
+      // будет возвращен старый результат
+      fetchPolicy: 'no-cache'
+    })
+
+    return allNestedRepliesComments
+  }
+
+  public async getComment (
+    commentId: number
+    // repliesPage: number | undefined = 1,
+    // repliesPerPage: number | undefined = COMMENT_COMMENTS_REPLIES_PER_PAGE_DEFAULT
   ): Promise<CommentsInterface> {
     const {
       data: {
@@ -46,10 +83,11 @@ export default class CommentRepository extends BaseRepository implements Comment
     } = await global._$app.$apollo.query({
       query: GET_COMMENT_QUERY,
       variables: {
-        id: commentId,
-        repliesPage,
-        repliesPerPage
-      }
+        id: commentId
+        // repliesPage,
+        // repliesPerPage
+      },
+      fetchPolicy: 'no-cache'
     })
 
     return comment
@@ -57,20 +95,25 @@ export default class CommentRepository extends BaseRepository implements Comment
 
   public async getCommentsPaginatedByPost (
     postId: number,
-    page: number = 1,
-    perPage: number = this.COMMENTS_PER_PAGE
+    page: number | undefined = 1,
+    perPage: number | undefined = ROOT_COMMENTS_BY_POST_PER_PAGE_DEFAULT,
+    repliesPreviewCount: number | undefined = ROOT_COMMENTS_REPLIES_PREVIEW_COUNT_DEFAULT
   ): Promise<CommentsInterface> {
     const {
       data: {
         comments
       }
     } = await global._$app.$apollo.query({
-      query: GET_COMMENTS_BY_POST_QUERY,
+      query: GET_COMMENTS_BY_POST_QUERY({
+        repliesPreviewCount
+      }),
       variables: {
         postId,
         page,
         perPage
-      }
+        // repliesPreviewCount
+      },
+      fetchPolicy: 'no-cache'
     })
 
     return comments

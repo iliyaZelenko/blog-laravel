@@ -139,7 +139,7 @@ export const actions: Actions<State, RootState> = {
     // const { user } = await global._$app.$get('auth/user')
     const user = await UserRepo.getAuthUser()
 
-    console.log(user)
+    console.log('User', user)
 
     return user
   },

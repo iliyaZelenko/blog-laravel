@@ -2,9 +2,10 @@
 
 namespace App\Models;
 
-use App\Traits\BaseModelTimezones;
+use App\Models\Resources\Scopes\BaseModelScopesOrderBy;
+use App\Models\Resources\Timezones\BaseModelTimezones;
 
 class BaseModelBaum extends \Baum\Node
 {
-    use BaseModelTimezones;
+    use BaseModelTimezones, BaseModelScopesOrderBy;
 }

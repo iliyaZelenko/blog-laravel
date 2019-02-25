@@ -9,8 +9,6 @@ class CommentMutator
 {
     public function create($root, array $args, $context, ResolveInfo $resolveInfo): Comment
     {
-//        dump($args);
-
         $input = $args['input'];
         $created = Comment::create([
             'post_id' => $input['postId'],
@@ -19,7 +17,6 @@ class CommentMutator
             'content' => $input['content']
         ]);
 
-        dump($created);
 
         return $created;
     }

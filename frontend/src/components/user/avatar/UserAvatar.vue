@@ -1,6 +1,6 @@
 <template>
   <v-avatar
-    :size="elSize"
+    :size="realElSize"
     color="grey lighten-4"
   >
     <v-img
@@ -29,18 +29,32 @@
 import Vue from 'vue'
 import { Prop } from 'vue-property-decorator'
 import Component from '~/plugins/nuxt-class-component'
-import { AvatarSizeTypes, UserInterface } from '~/apollo/schema/users'
+import { AVATAR_SM, AvatarSizeTypes, UserInterface } from '~/apollo/schema/users'
+import ElSizeVariantsType, { LG, MD, SM } from '~/components/user/avatar/ElSizeVariantsType'
 
 @Component({
   name: 'UserAvatar'
 })
 export default class UserAvatar extends Vue {
-  @Prop({ default: '38px' }) elSize!: string
+  @Prop(String) elSize!: string
+  @Prop({ default: MD }) elSizeVariant!: ElSizeVariantsType
   @Prop(Object) user!: UserInterface
-  @Prop({ default: 'sm' }) sizeType!: AvatarSizeTypes
+  @Prop({ default: AVATAR_SM }) sizeType!: AvatarSizeTypes
 
   get avatarOwner () {
     return this.user || this.$auth.user
+  }
+
+  get realElSize () {
+    if (this.elSize) return this.elSize
+
+    const variants = {
+      [SM]: 26,
+      [MD]: 38,
+      [LG]: 66
+    }
+
+    return variants[this.elSizeVariant] + 'px'
   }
 
   get imgSrc () {

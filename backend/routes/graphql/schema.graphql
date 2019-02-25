@@ -18,7 +18,7 @@ type Query {
 
     ## Comments ##
     comment(id: ID @eq): Comment @find
-    comments(post_id: ID @eq): [Comment]! @paginate(scopes: ["IsRoot"])
+    comments(post_id: ID @eq): [Comment]! @paginate(scopes: ["IsRoot", "OrderByDESC"])
 
     ## Categories ##
     category(id: ID @eq): Category @find

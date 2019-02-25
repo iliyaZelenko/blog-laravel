@@ -4,6 +4,7 @@ import * as root from './root'
 // import * as people from './modules/people'
 import * as BackendRoutesModule from './modules/BackendRoutes'
 import * as AuthModule from './modules/auth'
+import * as UIModule from './modules/ui'
 
 // More info about store: https://vuex.vuejs.org/en/core-concepts.html
 // See https://nuxtjs.org/guide/vuex-store#classic-mode
@@ -14,10 +15,11 @@ import * as AuthModule from './modules/auth'
 // action: Sync or async operations that commit mutations
 // mutations: Modify the state
 
-interface ModulesStates {
+export interface ModulesStates {
   // до этого тут было BackendRoutes
-  [BackendRoutesModule.NAME]: BackendRoutesModule.State,
-  [AuthModule.NAME]: AuthModule.State,
+  [BackendRoutesModule.NAME]: BackendRoutesModule.State
+  [AuthModule.NAME]: AuthModule.State
+  [UIModule.NAME]: UIModule.State
 }
 
 export type RootState = root.State & ModulesStates
@@ -25,15 +27,13 @@ export type RootState = root.State & ModulesStates
 const createStore = () => {
   return new Vuex.Store({
     state: root.state(),
-    // @ts-ignore (это вроде баг типов, его должны пофиксить)
     getters: root.getters,
     mutations: root.mutations,
-    // @ts-ignore
     actions: root.actions,
-    // @ts-ignore
     modules: {
       [BackendRoutesModule.NAME]: BackendRoutesModule,
-      [AuthModule.NAME]: AuthModule
+      [AuthModule.NAME]: AuthModule,
+      [UIModule.NAME]: UIModule.default
     }
   })
 }

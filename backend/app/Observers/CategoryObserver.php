@@ -45,10 +45,13 @@ class CategoryObserver
      */
     public function deleted(Category $category)
     {
-        $category->parent()->decrement('children_count');
+        $parent = $category->parent;
 
+        if (!$parent) return;
+
+        $parent->decrement('children_count');
         // обновляет кол-во детей в родителських категориях
-        $category->getAncestorsAndSelf()->each(function (Category $ancestor) {
+        $parent->getAncestorsAndSelf()->each(function (Category $ancestor) {
             $ancestor->decrement('all_children_count');
         });
     }

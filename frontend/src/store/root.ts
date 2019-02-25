@@ -1,22 +1,25 @@
 import { GetterTree, ActionContext, ActionTree, MutationTree } from 'vuex'
-import { RootState } from 'store'
-import * as BackendRoutes from './modules/BackendRoutes'
+import { ModulesStates, RootState } from 'store'
+import * as BackendRoutesModule from './modules/BackendRoutes'
 import * as AuthModule from './modules/auth'
+import * as UIModule from './modules/ui'
 
 export const types = {
   SET_META: 'SET_META'
 }
 
-export interface State {
+export interface State extends ModulesStates {
   meta: any
-  [BackendRoutes.NAME]: any
-  [AuthModule.NAME]: any
+  // [BackendRoutes.NAME]: any
+  // [AuthModule.NAME]: any
 }
 
 export const state = (): State => ({ // было State
   meta: {},
-  [BackendRoutes.NAME]: BackendRoutes.state,
-  [AuthModule.NAME]: AuthModule.state
+  // TODO зачем там вообще функция? Хотя возможно лучше оставить, чтобы легче было переносить на Nuxt 3
+  [BackendRoutesModule.NAME]: BackendRoutesModule.state(),
+  [AuthModule.NAME]: AuthModule.state(),
+  [UIModule.NAME]: UIModule.state()
 })
 
 export const getters: GetterTree<State, RootState> = {}

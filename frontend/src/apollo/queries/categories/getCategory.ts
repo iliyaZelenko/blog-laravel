@@ -1,6 +1,12 @@
 import gql from 'graphql-tag'
+import { useFragment, defineFragment } from '~/apollo/fragments'
+import PostFragment from '~/apollo/fragments/posts/PostFragment'
+import PaginatorInfoFragment from '~/apollo/fragments/paginator/PaginatorInfoFragment'
 
 export const GET_CATEGORY_QUERY = gql`
+  ${defineFragment(PostFragment)}
+  ${defineFragment(PaginatorInfoFragment)}
+
   query GetCategoryQuery ($id: ID!, $page: Int = 1, $perPage: Int = 4) {
     category (id: $id) {
       id
@@ -22,33 +28,12 @@ export const GET_CATEGORY_QUERY = gql`
         childrenCount
         allChildrenCount
       }
-      # этот запрос должен совпадать с тем что в getCategoryPosts!
       posts (count: $perPage, page: $page) {
         data {
-          id
-          title
-          titleSlug
-          contentShort
-          createdAt
-          ratingValue
-          ratingValuePositive
-          ratingValueNegative
-          user {
-            id
-            avatar {
-              sm
-              md
-            }
-            createdAt
-            nickname
-            fullName
-          }
+          ${useFragment(PostFragment)}
         }
         paginatorInfo {
-          lastPage
-          currentPage
-          count
-          total
+          ${useFragment(PaginatorInfoFragment)}
         }
       }
     }

@@ -50,7 +50,7 @@
           'red--text': info.negative >= 2
         }"
       >
-        {{ info.negative * -1 }}
+        {{ info.negative }}
       </small>
     </div>
 

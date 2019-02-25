@@ -1,47 +1,24 @@
 import gql from 'graphql-tag'
+import { useFragment, defineFragment } from '~/apollo/fragments'
+import CommentFragment from '~/apollo/fragments/comments/CommentFragment'
+import PaginatorInfoFragment from '~/apollo/fragments/paginator/PaginatorInfoFragment'
 
 export const GET_COMMENT_REPLIES_QUERY = gql`
-  query GetCommentRepliesQuery($id: ID!, $repliesPage: Int = 1, $repliesPerPage: Int = 10) {
+  ${defineFragment(CommentFragment)}
+  ${defineFragment(PaginatorInfoFragment)}
+
+  query GetCommentRepliesQuery($id: ID!, $repliesPage: Int = 1, $repliesPerPage: Int!) {
     comment (id: $id) {
+      # Важно передавать id: https://github.com/apollographql/apollo-client/issues/2510#issuecomment-343957704
+      id
       repliesComments (page: $repliesPage, count: $repliesPerPage) {
         data {
-          ...CommentsFields
-#          repliesComments(count: 1) {
-#            data {
-#              ...CommentsFields
-#            }
-#          }
+          ${useFragment(CommentFragment)}
         }
         paginatorInfo {
-          count
-          currentPage
-          perPage
-          total
-          lastPage
+          ${useFragment(PaginatorInfoFragment)}
         }
       }
-    }
-  }
-
-  fragment CommentsFields on Comment {
-    id
-    content
-    createdAt
-    ratingValue
-    ratingValuePositive
-    ratingValueNegative
-    repliesCount
-    user {
-      id
-      nickname
-      fullName
-      avatar {
-        sm
-        md
-      }
-      createdAt
-      gender
-      age
     }
   }
 `

@@ -2,9 +2,7 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
-
-class Scope extends Model
+class Scope extends BaseModel
 {
     protected $table = 'scopes';
 

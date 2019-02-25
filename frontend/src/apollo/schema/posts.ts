@@ -22,6 +22,7 @@ export interface PostInterface {
   ratingValue: number
   ratingValuePositive: number
   ratingValueNegative: number
+  commentsCount: number
   user: {
     id: number
     nickname: string

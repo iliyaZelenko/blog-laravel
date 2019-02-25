@@ -4,7 +4,8 @@
     :value="value"
     :mini-variant="mini"
     temporary
-    absolute
+    fixed
+    app
     @input="$emit('input', arguments[0])"
   >
     <v-list class="pa-1">

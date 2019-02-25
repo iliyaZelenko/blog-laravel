@@ -20,8 +20,8 @@
           >
             <user-avatar
               :user="user"
-              size-type="md"
-              el-size="66px"
+              :el-size-variant="userAvatarSizeVariant"
+              :size-type="userAvatarSizeType"
             />
           </v-list-tile-avatar>
 
@@ -62,7 +62,7 @@
             Gender:
           </b>
           <time>
-            {{ user.gender === 'MALE' ? 'male' : 'female' }}
+            {{ user.gender === genderMaleStatus ? genderMaleReadable : genderFemaleReadable }}
           </time>
         </div>
         <div v-if="user.age">
@@ -108,9 +108,10 @@ import { Prop } from 'vue-property-decorator'
 import { Inject } from 'vue-inversify-decorator'
 import { TYPES } from '~/configs/dependencyInjection/types'
 import Component from '~/plugins/nuxt-class-component'
-import { UserInterface } from '~/apollo/schema/users'
+import { AVATAR_MD, GENDER_INFO, UserInterface } from '~/apollo/schema/users'
 import UserAvatar from '~/components/user/avatar/UserAvatar.vue'
 import { PathGeneratorInterface } from '~/configs/dependencyInjection/interfaces'
+import { LG } from '~/components/user/avatar/ElSizeVariantsType'
 
 @Component({
   name: 'UserMenu',
@@ -121,9 +122,14 @@ export default class UserMenu extends Vue {
 
   @Inject(TYPES.PathGeneratorInterface) private pathGenerator!: PathGeneratorInterface
 
+  public genderMaleStatus = GENDER_INFO.status.male
+  public genderMaleReadable = GENDER_INFO.readable.male
+  public genderFemaleReadable = GENDER_INFO.readable.female
   public blockModel: boolean = false
   public subscribeModel: boolean = false
   public favoriteModel: boolean = false
+  public userAvatarSizeVariant: string = LG
+  public userAvatarSizeType: string = AVATAR_MD
 
   public menuModel: boolean = false
 

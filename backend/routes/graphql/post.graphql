@@ -9,6 +9,7 @@ type Post {
     ratingValue: Int! @rename(attribute: "rating_value")
     ratingValuePositive: Int! @rename(attribute: "rating_value_positive")
     ratingValueNegative: Int! @rename(attribute: "rating_value_negative")
+    commentsCount: Int! @rename(attribute: "comments_count")
 
     # ratingInfo: RatingInfo! @field(resolver: "App\\Http\\GraphQL\\Types\\PostType@getRatingInfo")
 
@@ -16,7 +17,7 @@ type Post {
     user: User! @belongsTo
     category: Category! @belongsTo
     # comments: [Comment]! @hasMany(type: "paginator")
-    comments: [Comment]! @paginate(builder: "App\\Http\\GraphQL\\Types\\PostType@getRootComments") # @field(resolver: "App\\Http\\GraphQL\\Types\\PostType@getRootComments")
+    comments: [Comment]! @paginate(builder: "App\\Http\\GraphQL\\Types\\PostType@getRootComments") # @hasMany(type: "paginator") # @field(resolver: "App\\Http\\GraphQL\\Types\\PostType@getRootComments")
 
     tags: [Tag]! @belongsToMany
 }

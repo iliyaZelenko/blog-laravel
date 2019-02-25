@@ -9,28 +9,6 @@
       align-center
       wrap
     >
-      <!--
-      <profile-menu :user="post.user">
-        <v-layout
-          slot="activator"
-          align-center
-          @click="onUserClick"
-        >
-          <user-avatar :user="post.user" />
-
-          <span class="body-2 ml-2">
-            {{ post.user.nickname }}
-            <span
-              v-if="post.user.fullName"
-              class="grey--text"
-            >
-              <br>
-              {{ post.user.fullName }}
-            </span>
-          </span>
-        </v-layout>
-      </profile-menu>
-      -->
       <user :user="post.user" />
 
       <v-icon class="ml-4">
@@ -41,7 +19,7 @@
         Category:
 
         <nuxt-link
-          :to="categoryPath(post.category)"
+          :to="getCategoryPath(post.category)"
         >
           <b>
             {{ post.category.name }}
@@ -71,19 +49,81 @@
 
     <v-card style="position: absolute; width: 100vw; left: 0;">
       <v-container>
+        <!--style="position: absolute; left: 50px;"-->
+        <div>
+          <b>Всего комментов: </b> {{ post.commentsCount }}.
+          <b>Комментов на странице (со вложеными): </b> {{ nestedCommentsCount }}.
+
+          <b>Root комментов на странице: </b> {{ post.comments.paginatorInfo.count }}.
+          <b>Root комментов всего: </b> {{ post.comments.paginatorInfo.total }}.
+        </div>
+
+        <br>
+
+        <v-alert
+          :value="!$auth.loggedIn"
+          type="info"
+        >
+          Чтобы комментировать, нужно быть аутентифицированным.
+          <nuxt-link
+            :to="pathGenerator.generate('auth-signin')"
+            class="white--text font-weight-bold"
+          >
+            Войти
+          </nuxt-link>
+          или
+          <nuxt-link
+            :to="pathGenerator.generate('auth-signup')"
+            class="white--text font-weight-bold"
+          >
+            зарегестрироваться.
+          </nuxt-link>
+        </v-alert>
+
+        <template v-if="$auth.loggedIn">
+          <v-btn
+            :color="showCommentCreationForm ? 'error' : 'primary'"
+            small
+            @click="showCommentCreationForm = !showCommentCreationForm"
+          >
+            <v-icon left>
+              {{ showCommentCreationForm ? 'close' : 'add_comment' }}
+            </v-icon>
+
+            {{
+              showCommentCreationForm
+                ? 'Скрыть форму'
+                : (commentsLength === 0 ? 'Добавить первый комментарий!' : 'Комментировать пост')
+            }}
+          </v-btn>
+
+          <v-expand-transition>
+            <post-comment-creation-form
+              v-if="showCommentCreationForm"
+              v-model="newCommentContent"
+              :post="post"
+              @comment-created="onCommentCreated"
+            />
+          </v-expand-transition>
+        </template>
+
         <!--:root-comments-per-page="rootCommentsPerPage"-->
         <post-comments
           :comments.sync="post.comments"
           :post="post"
           :is-root="true"
           :nested-lvl="0"
+          :observable="observable"
+          class="mt-3"
         />
       </v-container>
     </v-card>
 
-    <!--<pre>
+    <!--
+    <pre>
       {{ post }}
-    </pre>-->
+    </pre>
+    -->
   </div>
 </template>
 
@@ -93,45 +133,53 @@ import { Prop } from 'vue-property-decorator'
 import { Inject } from 'vue-inversify-decorator'
 import Component from '~/plugins/nuxt-class-component'
 import { TYPES } from '~/configs/dependencyInjection/types'
-import { PathGeneratorInterface, PostRepositoryInterface } from '~/configs/dependencyInjection/interfaces'
+import {
+  ObservableInterface,
+  PathGeneratorInterface,
+  PostRepositoryInterface
+} from '~/configs/dependencyInjection/interfaces'
 import { CategoryInterface } from '~/apollo/schema/categories'
 import { PostInterface } from '~/apollo/schema/posts'
 import { serviceContainer } from '~/configs/dependencyInjection/container'
 import Tags from '~/components/posts/post/tags/Tags.vue'
 import Rating from '~/components/rating/Rating.vue'
-// import PostComments from '~/components/posts/post/comments/PostComments.vue' PostComments,
 import User from '~/components/user/User.vue'
+import PostCommentCreationForm from '~/components/posts/post/comments/PostCommentCreationForm.vue'
+import { CommentInterface } from '~/apollo/schema/comments'
 
 const PathGenerator = serviceContainer.get<PathGeneratorInterface>(TYPES.PathGeneratorInterface)
+const PostRepo = serviceContainer.get<PostRepositoryInterface>(TYPES.PostRepositoryInterface)
 
 @Component({
-  name: 'Post',
-  components: { User, Tags, Rating },
+  name: 'PostPage',
+  components: { PostCommentCreationForm, User, Tags, Rating },
   scrollToTop: true,
   head () {
     return {
       title: this.post.title,
       meta: [
-        { content: `Просмотр поста "${this.post.title}"`, name: 'description', hid: 'description' }
+        // https://blog.spotibo.com/meta-description-length/
+        { content: `${this.post.content.slice(0, 150)}"`, name: 'description', hid: 'description' }
       ]
     }
   }
 })
-export default class Post extends Vue {
+export default class extends Vue {
   @Prop(String) id!: string
   @Prop(String) slug!: string
 
   // @ts-ignore
   @Inject(TYPES.PathGeneratorInterface) private pathGenerator!: PathGeneratorInterface
+  @Inject(TYPES.ObservableInterface) private observable!: ObservableInterface
+
   // @Inject(TYPES.PostRepositoryInterface) private postRepo!: PostRepositoryInterface
 
   public post!: PostInterface
-  // public rootCommentsPerPage!: number
+  public showCommentCreationForm: boolean = false
+  public newCommentContent: string = ''
 
   async asyncData ({ app, redirect, error, params: { id, slug } }) {
-    const PostRepo = serviceContainer.get<PostRepositoryInterface>(TYPES.PostRepositoryInterface)
-    const rootCommentsPerPage = PostRepo.POST_COMMENTS_PER_PAGE
-    const post = await PostRepo.getPost(id, rootCommentsPerPage)
+    const post = await fetchPost(id)
 
     if (!post) {
       return error({
@@ -157,6 +205,16 @@ export default class Post extends Vue {
     }
   }
 
+  get commentsLength () {
+    return this.post.comments.data.length
+  }
+
+  get nestedCommentsCount () {
+    return this.post.comments.data.reduce((prev, curr: CommentInterface) => {
+      return prev + curr.allRepliesCount + 1
+    }, 0)
+  }
+
   onUserClick () {
     this.$router.push(
       this.pathGenerator.generate({
@@ -168,7 +226,16 @@ export default class Post extends Vue {
     )
   }
 
-  categoryPath (category: CategoryInterface) {
+  async onCommentCreated () {
+    this.post = (await fetchPost(this.id))!
+
+    // не важно, на первой сттранице (на которой покажется добавленный комментарий) или другая, root комменты имеют desc
+    // порядок, в отличие от вложенных (там важно сохранить порядок комментов)
+    this.observable.emit('loadComments')
+    this.showCommentCreationForm = false
+  }
+
+  getCategoryPath (category: CategoryInterface) {
     return this.pathGenerator.generate({
       name: 'category-with-path',
       params: {
@@ -188,5 +255,9 @@ function getPostPath (post: PostInterface) {
       id: post.id.toString()
     }
   })
+}
+
+async function fetchPost (id): Promise<PostInterface | null> {
+  return PostRepo.getPost(id)
 }
 </script>

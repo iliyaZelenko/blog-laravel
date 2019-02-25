@@ -28,7 +28,7 @@
       {{ snackbarText }}
 
       <v-btn
-        color="pink"
+        color="white"
         flat
         @click="snackbar = false"
       >
@@ -75,12 +75,10 @@ export default class extends Vue {
   async createComment () {
     const input = {
       postId: this.post.id,
-      userId: this.post.user.id,
-      commentId: this.comment.id,
+      userId: this.$auth.user.id,
+      commentId: this.comment ? this.comment.id : null,
       content: this.value
     }
-
-    console.log(input)
 
     this.loading = true
 

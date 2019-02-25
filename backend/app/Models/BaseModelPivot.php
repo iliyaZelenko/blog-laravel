@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Relations\Pivot;
-use App\Traits\BaseModelTimezones;
+use App\Models\Resources\Timezones\BaseModelTimezones;
 
 class BaseModelPivot extends Pivot
 {

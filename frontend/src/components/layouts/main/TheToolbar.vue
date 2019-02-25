@@ -80,7 +80,6 @@
 
       <the-toolbar-user-menu />
     </template>
-
     <template v-else>
       <v-toolbar-items class="hidden-sm-and-down">
         <!--attach because v-toolbar have app attribute-->
@@ -187,7 +186,7 @@ import {
   // Action,
   // Mutation,
   namespace
-} from 'vuex-class'
+} from 'nuxt-class-component'
 
 const authModule = namespace('auth')
 const authEmailVerificationModule = namespace('auth/emailVerification')

@@ -19,7 +19,7 @@ class PostType
         return $root->comments()
             ->orderBy('created_at', 'desc')
             ->where('comment_id')
-            ->with('allRepliesComments')
+            ->with(['repliesComments', 'user'])
         ;
     }
 }

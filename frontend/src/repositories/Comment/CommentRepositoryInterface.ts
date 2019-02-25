@@ -1,24 +1,26 @@
 import { CommentCreationInputInterface, CommentsInterface } from '~/apollo/schema/comments'
 
 export default interface CommentRepositoryInterface {
-  readonly COMMENTS_PER_PAGE
-
   getCommentRepliesPaginated (
     commentId: number,
-    repliesPage: number,
-    repliesPerPage: number
+    repliesPage?: number,
+    repliesPerPage?: number
   ): Promise<CommentsInterface>
+
   getCommentsPaginatedByPost (
     postId: number,
-    page: number,
-    perPage: number
+    page?: number,
+    perPage?: number,
+    repliesPreviewCount?: number
   ): Promise<CommentsInterface>
+
   createComment (
     input: CommentCreationInputInterface
   ): Promise<CommentsInterface>
+
   getComment (
     commentId: number,
-    repliesPage: number | undefined,
-    repliesPerPage: number | undefined
+    repliesPage?: number,
+    repliesPerPage?: number
   ): Promise<CommentsInterface>
 }

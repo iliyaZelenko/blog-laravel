@@ -9,7 +9,7 @@ export interface CommentsInterface {
     perPage: number
     total: number
     lastPage: number
-  }
+  } | null
 }
 
 export interface CommentInterface {
@@ -21,6 +21,8 @@ export interface CommentInterface {
   ratingValuePositive: number
   ratingValueNegative: number
   repliesCount: number
+  allRepliesCount: number
+
   user: UserInterface
   post: PostInterface
   repliedComment: CommentInterface
@@ -30,6 +32,6 @@ export interface CommentInterface {
 export interface CommentCreationInputInterface {
   postId: number
   userId: number
-  commentId?: number
+  commentId: number | null
   content: string
 }

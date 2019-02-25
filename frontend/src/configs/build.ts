@@ -8,6 +8,7 @@ export default {
 
   babel: {
     plugins: [
+      '@babel/plugin-proposal-optional-chaining'
       // в babel 7 используется этот пакет, a не "transform-runtime"
       // '@babel/plugin-transform-runtime'
     ],

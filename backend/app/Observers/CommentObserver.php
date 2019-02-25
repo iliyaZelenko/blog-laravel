@@ -16,7 +16,17 @@ class CommentObserver
     {
         $comment->user()->increment('comments_count');
         $comment->post()->increment('comments_count');
-        $comment->repliedComment()->increment('replies_count');
+
+        $repliedComment = $comment->parent;
+
+        if (!$repliedComment) return;
+
+        $repliedComment->increment('replies_count');
+
+        // обновляет кол-во детей в родителських категориях
+        $repliedComment->getAncestorsAndSelf()->each(function(Comment $ancestor) {
+            $ancestor->increment('all_replies_count');
+        });
     }
 
     /**
@@ -40,7 +50,16 @@ class CommentObserver
     {
         $comment->user()->decrement('comments_count');
         $comment->post()->decrement('comments_count');
-        $comment->repliedComment()->decrement('replies_count');
+
+        $repliedComment = $comment->parent;
+
+        if (!$repliedComment) return;
+
+        $repliedComment->decrement('replies_count');
+        // обновляет кол-во детей в родителських категориях
+        $repliedComment->getAncestorsAndSelf()->each(function (Comment $ancestor) {
+            $ancestor->decrement('all_replies_count');
+        });
     }
 
     /**

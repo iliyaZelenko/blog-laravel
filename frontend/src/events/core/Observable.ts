@@ -3,6 +3,7 @@ import ObservableInterface from '~/events/core/ObservableInterface'
 import bindListenersConfig from '~/configs/events/bindListeners'
 import { serviceContainer } from '~/configs/dependencyInjection/container'
 import ListenerInterface from '~/events/listeners/ListenerInterface'
+import listenerType from '~/events/core/ListenerType'
 
 @injectable()
 export default class Observable implements ObservableInterface {
@@ -35,9 +36,13 @@ export default class Observable implements ObservableInterface {
     }
   }
 
-  public async on (eventName: string, callback: (param?: any) => any) {
+  public async on (eventName: string, listener: listenerType) {
     if (!this.listeners[eventName]) this.listeners[eventName] = []
 
-    this.listeners[eventName].push(callback)
+    this.listeners[eventName].push(listener)
+  }
+
+  public async removeListener (eventName: string, listener: listenerType) {
+    this.listeners[eventName] = this.listeners[eventName].filter(i => i !== listener)
   }
 }

@@ -1,33 +1,19 @@
 import gql from 'graphql-tag'
+import { useFragment, defineFragment } from '~/apollo/fragments'
+import PostFragment from '~/apollo/fragments/posts/PostFragment'
+import PaginatorInfoFragment from '~/apollo/fragments/paginator/PaginatorInfoFragment'
 
 export const GET_ALL_POSTS_QUERY = gql`
+  ${defineFragment(PostFragment)}
+  ${defineFragment(PaginatorInfoFragment)}
+
   query GetAllPostsQuery($page: Int = 1, $perPage: Int = 8) {
     allPosts (page: $page, count: $perPage) {
       data {
-        id
-        title
-        contentShort
-        createdAt
-        ratingValue
-        ratingValuePositive
-        ratingValueNegative
-        user {
-          id
-          avatar {
-            sm
-            md
-          }
-          createdAt
-          nickname
-          fullName
-        }
+        ${useFragment(PostFragment)}
       }
       paginatorInfo {
-        count
-        currentPage
-        perPage
-        total
-        lastPage
+        ${useFragment(PaginatorInfoFragment)}
       }
     }
   }

@@ -26,7 +26,7 @@
           </v-chip>
         </template>
         <template v-else>
-          Введите число и нажмите Enter чтобы создать
+          Введите число и нажмите <kbd>Enter</kbd> чтобы создать
         </template>
       </v-list-tile>
     </template>
@@ -35,7 +35,7 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import { Prop, Watch } from 'vue-property-decorator'
+import { Prop } from 'vue-property-decorator'
 import Component from '~/plugins/nuxt-class-component'
 
 @Component({
@@ -43,10 +43,10 @@ import Component from '~/plugins/nuxt-class-component'
 })
 export default class PostCommentsPerPage extends Vue {
   @Prop(Number) value!: number
+  @Prop(Boolean) loading!: boolean
 
-  public loading: boolean = false
   public perPageItems = [
-    // первым элементом поставится то что указанно в репозитории (created hook)
+    // если value не совпадает с тем что в prop, то добавляется автоматически (created hook)
     {
       text: 'По 2',
       value: 2
@@ -74,8 +74,9 @@ export default class PostCommentsPerPage extends Vue {
     return !isNaN(+this.perPageItemsSearch)
   }
 
-  @Watch('value')
-  onValueChange (value) {
+  created () {
+    const value = this.value
+
     if (this.perPageItems.some(i => i.value === value)) return
 
     this.perPageItemsAddItem({

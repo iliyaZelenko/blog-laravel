@@ -2,9 +2,7 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
-
-class KeepInMindRecord extends Model
+class KeepInMindRecord extends BaseModel
 {
     protected $table = 'keep_in_mind_records';
 

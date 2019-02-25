@@ -1,5 +1,7 @@
 <template>
-  <v-app>
+  <v-app
+    :dark="isDark"
+  >
     <the-toolbar @navigation-drawer="onNavigationDrawerChange" />
     <the-navigation-drawer v-model="navigationDrawer" />
     <v-content>
@@ -53,6 +55,12 @@ import TheNavigationDrawer from '~/components/layouts/main/TheNavigationDrawer.v
 import { serviceContainer } from '~/configs/dependencyInjection/container'
 import { TYPES } from '~/configs/dependencyInjection/types'
 import { ScrollInterface } from '~/configs/dependencyInjection/interfaces'
+import {
+  namespace
+} from 'nuxt-class-component'
+import * as UIModule from '~/store/modules/ui'
+
+const UI = namespace(UIModule.NAME)
 
 @Component({
   name: 'MainLayout',
@@ -62,6 +70,7 @@ import { ScrollInterface } from '~/configs/dependencyInjection/interfaces'
 })
 @ProvideServiceContainerForInversify(serviceContainer)
 export default class MainLayout extends Vue {
+  @UI.Getter isDark!: boolean
   // @inject(TYPES.ScrollInterface) private scroll!: ScrollInterface
 
   public navigationDrawer: boolean = false
