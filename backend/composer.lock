@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8d0cc8b42abb3713c6b18bf839c3fc6a",
+    "content-hash": "7eabfef4733b02a9b3bf066ab72bd311",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -1341,20 +1341,20 @@
         },
         {
             "name": "mll-lab/laravel-graphql-playground",
-            "version": "v0.3.3",
+            "version": "v1.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mll-lab/laravel-graphql-playground.git",
-                "reference": "390b678a3e423d80d349e1fa61461e0dcbf4d502"
+                "reference": "b07606b350c4f61182220394e9c5109a08c3bac3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mll-lab/laravel-graphql-playground/zipball/390b678a3e423d80d349e1fa61461e0dcbf4d502",
-                "reference": "390b678a3e423d80d349e1fa61461e0dcbf4d502",
+                "url": "https://api.github.com/repos/mll-lab/laravel-graphql-playground/zipball/b07606b350c4f61182220394e9c5109a08c3bac3",
+                "reference": "b07606b350c4f61182220394e9c5109a08c3bac3",
                 "shasum": ""
             },
             "require": {
-                "laravel/framework": "5.1.*|5.2.*|5.3.*|5.4.*|5.5.*|5.6.*|5.7.*",
+                "laravel/framework": ">=5.1.0",
                 "php": ">=5.5.9"
             },
             "require-dev": {
@@ -1389,7 +1389,7 @@
                 "graphql-playground",
                 "laravel"
             ],
-            "time": "2018-09-19T08:57:32+00:00"
+            "time": "2019-02-28T13:53:27+00:00"
         },
         {
             "name": "monolog/monolog",

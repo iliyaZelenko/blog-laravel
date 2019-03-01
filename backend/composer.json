@@ -13,7 +13,7 @@
         "intervention/image": "^2.4",
         "laravel/framework": "5.7.*",
         "laravel/tinker": "^1.0",
-        "mll-lab/laravel-graphql-playground": "^0.3.3",
+        "mll-lab/laravel-graphql-playground": "^1.0.0",
         "nuwave/lighthouse": "^2.6",
         "tymon/jwt-auth": "^1.0"
     },
